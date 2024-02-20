@@ -3,9 +3,9 @@ import { defineConfig } from "vitepress";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   base: "/portfolio/",
+  head: [["link", { rel: "icon", href: "/portfolio/favicon.ico" }]],
   title: "Michel Carlos - Software Engineer",
   description: "Software Engineer",
-  head: [["link", { rel: "icon", href: "/favicon.ico" }]],
   themeConfig: {
     siteTitle: "Michel Carlos 🇧🇷",
     nav: [
