@@ -14,20 +14,20 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+      # Setup pnpm
+      - uses: pnpm/action-setup@v2
         with:
-          node-version: 20
-          cache: npm
-      - run: npm ci
+          version: 8
+      - run: pnpm ci
       - name: Build
-        run: npm run docs:build
-      - uses: actions/configure-pages@v2
-      - uses: actions/upload-pages-artifact@v1
+        run: pnpm run portfolio:build
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/.vitepress/dist
+          path: portfolio/.vitepress/dist
       - name: Deploy
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
