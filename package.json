@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "portfolio:dev": "vitepress dev portfolio",
+    "portfolio:build": "vitepress build portfolio",
+    "portfolio:preview": "vitepress preview portfolio"
+  },
+  "devDependencies": {
+    "vitepress": "1.0.0-rc.42"
+  }
+}
