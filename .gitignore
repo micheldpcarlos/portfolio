@@ -64,3 +64,7 @@ node_modules/
 
 # dotenv environment variables file
 .env
+
+# vitepress build output
+portfolio/.vitepress/dist
+portfolio/.vitepress/cache

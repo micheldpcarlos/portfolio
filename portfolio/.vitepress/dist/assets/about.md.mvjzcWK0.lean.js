@@ -1,1 +1,0 @@
-import{_ as s,c as i,o as a,V as n}from"./chunks/framework._pR1a6Ns.js";const g=JSON.parse('{"title":"Markdown Extension Examples","description":"","frontmatter":{},"headers":[],"relativePath":"about.md","filePath":"about.md"}'),t={name:"about.md"},l=n("",19),e=[l];function p(h,k,r,o,d,E){return a(),i("div",null,e)}const u=s(t,[["render",p]]);export{g as __pageData,u as default};

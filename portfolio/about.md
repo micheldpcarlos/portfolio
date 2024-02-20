@@ -15,7 +15,7 @@ I've been in touch with tech for more than **15 years** now, and I'm always lear
 I consider myself a problem solver who is constantly learning new stuff to **get ~~sh~~it done**.
 
 <p align="center">
-    <img src="./images/me_intro.png" alt="Michel Carlos colorful image" style="height:350px;">
+    <img src="./public/images/me-intro.png" alt="Michel Carlos colorful image" style="height:350px;">
     <small>Cool picture of me, created for my Vue.js course page</small>
 </p>
 
@@ -26,12 +26,12 @@ I live in a small town called **Aguaí**, in the countryside of **São Paulo**, 
 Fun fact: We are the same age; she was born on 04/13/1991, and I was born on 08/13/1991.
 
 <p align="center">
-    <img src="./images/family.jpg" alt="Michel Carlos colorful image" style="width: 100%;">
+    <img src="./public/images/family.jpg" alt="Michel Carlos colorful image" style="width: 100%;">
     <small>Family 🥰</small>
 </p>
 
 <p align="center">
-    <img src="./images/costume.jpg" alt="Michel Carlos colorful image" style="width: 100%;">
+    <img src="./public/images/costume.jpg" alt="Michel Carlos colorful image" style="width: 100%;">
     <small>IE This costume can't be displayed and 404 Error costumes</small>
 </p>
 
@@ -43,7 +43,7 @@ Don't worry; Cacau and Tobias also get their vacation when we travel, staying at
 
 <p align="center">
   <video autoplay loop muted playsinline>
-      <source src="./videos/cacau-and-tobias.mp4" type="video/mp4">
+      <source src="./public/videos/cacau-and-tobias.mp4" type="video/mp4">
   </video>
   <small>Cacau and Tobias anxiously waiting for my mother-in-law to open the gate</small>
 </p>
@@ -62,5 +62,5 @@ To be continued...
 > This is a work in progress. Thanks for getting here 🥰
 
 <p align="center">
-    <img src="./images/farmer.jpg" style="width: 100%;">
+    <img src="./public/images/farmer.jpg" style="width: 100%;">
 </p>

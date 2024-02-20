@@ -3,7 +3,7 @@
 It may sound funny, but surprisingly, in my career, I was never able to finish a portfolio 🥲
 
 <p align="center">
-     <img src="./images/joke.png" style="height:350px;">
+     <img src="./public/images/joke.png" style="height:350px;">
      <small>At this point I'm just accepting it</small>
 </p>
 
@@ -12,7 +12,7 @@ It may sound funny, but surprisingly, in my career, I was never able to finish a
 To me, creating a portfolio is about my period of **job search**, and now I understand that, luckily or not, that's the reason I only had WIP portfolios but never finished them.
 
 <p align="center">
-     <img src="./images/new-job-ready-meme.jpg" style="height:350px;">
+     <img src="./public/images/new-job-ready-meme.jpg" style="height:350px;">
 </p>
 
 #### Passive job search 👋🏼
@@ -38,7 +38,7 @@ Guess what?! Right after accepting the offer (if my wife allowed it), my focus a
 With a new job I have A LOT to learn and to adapt, even if I have all the skills to hit the ground running, there is a hole new universe in front of me and I need to learn and understand it to be able to contribute and be successfull.
 
 <p align="center">
-     <img src="./images/new-job-meme.jpg" style="height:350px;">
+     <img src="./public/images/new-job-meme.jpg" style="height:350px;">
 </p>
 
 ## This portfolio?
@@ -48,7 +48,7 @@ Hopefully, I gotta be lucky again and get my dream job without a finished portfo
 One thing is right: I stopped feeling blame or shame for not dedicating time to finish a portfolio, I guess it is more about how I function and put my focus on what is important to me.
 
 <p align="center">
-     <img src="./images/unfinished-projects.jpg" style="height:350px;">
+     <img src="./public/images/unfinished-projects.jpg" style="height:350px;">
 </p>
 
 Thanks for taking the time to understand my motivations. I really appreciate it 🥰
