@@ -35,7 +35,7 @@ During my career, I only got to the "in-between" phase, where I started my portf
 
 Guess what?! Right after accepting the offer (if my wife allowed it), my focus and motivations **completely change**.
 
-With a new job I have A LOT to learn and to adapt, even if I have all the skills to hit the ground running, there is a hole new universe in front of me and I need to learn and understand it to be able to contribute and be successfull.
+With a new job I have A LOT to learn and to adapt, even if I have all the skills to hit the ground running, there is a whole new universe in front of me and I need to learn and understand it to be able to contribute and be successfull.
 
 <p align="center">
      <img src="./public/images/new-job-meme.jpg" style="height:350px;">
