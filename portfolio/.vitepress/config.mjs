@@ -1,8 +1,20 @@
 import { defineConfig } from "vitepress";
 
+const umamiScript = ["script", {
+  defer: "true",
+  src: "https://cloud.umami.is/script.js",
+  "data-website-id": "c8101198-d324-4021-b22b-963a60bcedf4"
+}];
+
+const baseHeaders = [];
+
+const headers = process.env.NODE_ENV === "production" ?
+  [...baseHeaders, umamiScript] :
+  baseHeaders;
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  head: [["link", { rel: "icon", href: "/favicon.ico" }]],
+  head: headers,
   title: "Michel Carlos - Software Engineer",
   description: "Software Engineer",
   themeConfig: {
