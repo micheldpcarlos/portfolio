@@ -1,5 +1,66 @@
 import { defineConfig } from "vitepress";
 
+
+const baseHeaders = [
+  ["meta", {
+    defer: "true",
+    src: "/myscript.js",
+    "data-website-id": "c8101198-d324-4021-b22b-963a60bcedf4"
+  }]
+];
+
+const fbMetaTags = [[
+  'meta',
+  { property: 'og:url', content: 'https://micheldpcarlos.com' }
+],
+[
+  'meta',
+  { property: 'og:type', content: 'website' }
+],
+[
+  'meta',
+  { property: 'og:title', content: 'Michel Carlos - Software Engineer' }
+],
+[
+  'meta',
+  { property: 'og:description', content: 'Experienced and passionate frontend specialist' }
+],
+[
+  'meta',
+  { property: 'og:image', content: '/images/meta-image.jpg' }
+]];
+
+const twitterMetaTags = [
+  [
+    'meta',
+    { name: 'twitter:card', content: 'summary' }
+  ],
+  [
+    'meta',
+    { property: 'twitter:domain', content: 'micheldpcarlos.com' }
+  ],
+  [
+    'meta',
+    { property: 'twitter:url', content: 'https://micheldpcarlos.com' }
+  ],
+  [
+    'meta',
+    { name: 'twitter:title', content: 'Michel Carlos - Software Engineer' }
+  ],
+  [
+    'meta',
+    { name: 'twitter:description', content: 'Experienced and passionate frontend specialist' }
+  ],
+  [
+    'meta',
+    { name: 'twitter:image', content: '/images/meta-image.jpg' }
+  ]
+];
+
+
+const headers = [...baseHeaders, ...fbMetaTags];
+
+
 // Self hosting unami script to avoid adblockers 
 const umamiScript = ["script", {
   defer: "true",
@@ -7,11 +68,11 @@ const umamiScript = ["script", {
   "data-website-id": "c8101198-d324-4021-b22b-963a60bcedf4"
 }];
 
-const baseHeaders = [];
+// Adding only for production env
+if (process.env.NODE_ENV === "production") {
+  headers.push(umamiScript);
+}
 
-const headers = process.env.NODE_ENV === "production" ?
-  [...baseHeaders, umamiScript] :
-  baseHeaders;
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
