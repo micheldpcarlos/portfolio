@@ -1,8 +1,9 @@
 import { defineConfig } from "vitepress";
 
+// Self hosting unami script to avoid adblockers 
 const umamiScript = ["script", {
   defer: "true",
-  src: "https://cloud.umami.is/script.js",
+  src: "/myscript.js",
   "data-website-id": "c8101198-d324-4021-b22b-963a60bcedf4"
 }];
 
