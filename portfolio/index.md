@@ -22,14 +22,14 @@ features:
     details: Almost <strong>4yrs</strong> of experience. This is my preferred JavaScript framework 💚
 
   - icon:
-      src: /icons/angular.svg
-    title: Angular
-    details: More than <strong>2yrs</strong> of experience. Robust and very opinionated, my top 2 🧑🏽‍💻
-
-  - icon:
       src: /icons/react.svg
     title: React
-    details: More than <strong>1yr</strong> of experience. Get things done, but it smells overengineering 👀
+    details: Approximatelly <strong>2yr</strong> of experience. Popular, versatile, and strong community 💙
+
+  - icon:
+      src: /icons/angular.svg
+    title: Angular
+    details: More than <strong>2yrs</strong> of experience. Robust and very opinionated 🧑🏽‍💻
 
   - icon:
       src: /icons/jquery.svg
@@ -60,7 +60,6 @@ features:
       src: /icons/javascript.svg
     title: JavaScript
     details: First contact in 2009 and <strong>7yrs</strong> of professional experience including a variety of libraries
-
 
   - icon:
       src: /icons/cypress.svg
