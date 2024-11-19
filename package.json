@@ -8,6 +8,8 @@
     "vitepress": "1.0.0-rc.42"
   },
   "dependencies": {
-    "vue": "^3.4.19"
+    "vue": "^3.4.19",
+    "survey-core": "latest",
+    "survey-js-ui": "latest"
   }
 }

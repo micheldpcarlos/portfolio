@@ -5,6 +5,12 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  survey-core:
+    specifier: latest
+    version: 1.12.10
+  survey-js-ui:
+    specifier: latest
+    version: 1.12.10(@types/react-dom@18.3.1)(@types/react@18.3.12)(survey-core@1.12.10)
   vue:
     specifier: ^3.4.19
     version: 3.4.19
@@ -12,7 +18,7 @@ dependencies:
 devDependencies:
   vitepress:
     specifier: 1.0.0-rc.42
-    version: 1.0.0-rc.42(@algolia/client-search@4.22.1)(search-insights@2.13.0)
+    version: 1.0.0-rc.42(@algolia/client-search@4.22.1)(@types/react@18.3.12)(search-insights@2.13.0)
 
 packages:
 
@@ -177,10 +183,10 @@ packages:
     resolution: {integrity: sha512-SPiDHaWKQZpwR2siD0KQUwlStvIAnEyK6tAE2h2Wuoq8ue9skzhlyVQ1ddzOxX6khULnAALDiR/isSF3bnuciA==}
     dev: true
 
-  /@docsearch/js@3.5.2(@algolia/client-search@4.22.1)(search-insights@2.13.0):
+  /@docsearch/js@3.5.2(@algolia/client-search@4.22.1)(@types/react@18.3.12)(search-insights@2.13.0):
     resolution: {integrity: sha512-p1YFTCDflk8ieHgFJYfmyHBki1D61+U9idwrLh+GQQMrBSP3DLGKpy0XUJtPjAOPltcVbqsTjiPFfH7JImjUNg==}
     dependencies:
-      '@docsearch/react': 3.5.2(@algolia/client-search@4.22.1)(search-insights@2.13.0)
+      '@docsearch/react': 3.5.2(@algolia/client-search@4.22.1)(@types/react@18.3.12)(search-insights@2.13.0)
       preact: 10.19.5
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -190,7 +196,7 @@ packages:
       - search-insights
     dev: true
 
-  /@docsearch/react@3.5.2(@algolia/client-search@4.22.1)(search-insights@2.13.0):
+  /@docsearch/react@3.5.2(@algolia/client-search@4.22.1)(@types/react@18.3.12)(search-insights@2.13.0):
     resolution: {integrity: sha512-9Ahcrs5z2jq/DcAvYtvlqEBHImbm4YJI8M9y0x6Tqg598P40HTEkX7hsMcIuThI+hTFxRGZ9hll0Wygm2yEjng==}
     peerDependencies:
       '@types/react': '>= 16.8.0 < 19.0.0'
@@ -210,6 +216,7 @@ packages:
       '@algolia/autocomplete-core': 1.9.3(@algolia/client-search@4.22.1)(algoliasearch@4.22.1)(search-insights@2.13.0)
       '@algolia/autocomplete-preset-algolia': 1.9.3(@algolia/client-search@4.22.1)(algoliasearch@4.22.1)
       '@docsearch/css': 3.5.2
+      '@types/react': 18.3.12
       algoliasearch: 4.22.1
       search-insights: 2.13.0
     transitivePeerDependencies:
@@ -559,6 +566,21 @@ packages:
     resolution: {integrity: sha512-6L6VymKTzYSrEf4Nev4Xa1LCHKrlTlYCBMTlQKFuddo1CvQcE52I0mwfOJayueUC7MJuXOeHTcIU683lzd0cUA==}
     dev: true
 
+  /@types/prop-types@15.7.13:
+    resolution: {integrity: sha512-hCZTSvwbzWGvhqxp/RqVqwU999pBf2vp7hzIjiYOsl8wqOmUxkQ6ddw1cV3l8811+kdUFus/q4d1Y3E3SyEifA==}
+
+  /@types/react-dom@18.3.1:
+    resolution: {integrity: sha512-qW1Mfv8taImTthu4KoXgDfLuk4bydU6Q/TkADnDWWHwi4NX4BR+LWfTp2sVmTqRrsHvyDDTelgelxJ+SsejKKQ==}
+    dependencies:
+      '@types/react': 18.3.12
+    dev: false
+
+  /@types/react@18.3.12:
+    resolution: {integrity: sha512-D2wOSq/d6Agt28q7rSI3jhU7G6aiuzljDGZ2hTZHIkrTLUI+AF3WMeKkEZ9nN2fkBAlcktT6vcZjDFiIhMYEQw==}
+    dependencies:
+      '@types/prop-types': 15.7.13
+      csstype: 3.1.3
+
   /@types/web-bluetooth@0.0.20:
     resolution: {integrity: sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==}
     dev: true
@@ -906,6 +928,22 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
+  /survey-core@1.12.10:
+    resolution: {integrity: sha512-ULdPnE3nMmKm4toidJCBF0QTZ293Aw6R8YMCf4YYwodUyTQN9VraftCej1QFXP+JXhZBhdsFyxrgeOC4qvN9Lw==}
+    dev: false
+
+  /survey-js-ui@1.12.10(@types/react-dom@18.3.1)(@types/react@18.3.12)(survey-core@1.12.10):
+    resolution: {integrity: sha512-BdZHAWsqFZv4bYhoCbo9+h9UHaM0+usQDBtPqU/x9/EhhSGlRDmm0gecJUaP43WHhYKzrHDsbBHrzMhKKw7OAA==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      survey-core: 1.12.10
+    dependencies:
+      '@types/react': 18.3.12
+      '@types/react-dom': 18.3.1
+      survey-core: 1.12.10
+    dev: false
+
   /tabbable@6.2.0:
     resolution: {integrity: sha512-Cat63mxsVJlzYvN51JmVXIgNoUokrIaT2zLclCXjRd8boZ0004U4KCs/sToJ75C6sdlByWxpYnb5Boif1VSFew==}
     dev: true
@@ -949,7 +987,7 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vitepress@1.0.0-rc.42(@algolia/client-search@4.22.1)(search-insights@2.13.0):
+  /vitepress@1.0.0-rc.42(@algolia/client-search@4.22.1)(@types/react@18.3.12)(search-insights@2.13.0):
     resolution: {integrity: sha512-VeiVVXFblt/sjruFSJBNChMWwlztMrRMe8UXdNpf4e05mKtTYEY38MF5qoP90KxPTCfMQiKqwEGwXAGuOTK8HQ==}
     hasBin: true
     peerDependencies:
@@ -962,7 +1000,7 @@ packages:
         optional: true
     dependencies:
       '@docsearch/css': 3.5.2
-      '@docsearch/js': 3.5.2(@algolia/client-search@4.22.1)(search-insights@2.13.0)
+      '@docsearch/js': 3.5.2(@algolia/client-search@4.22.1)(@types/react@18.3.12)(search-insights@2.13.0)
       '@shikijs/core': 1.1.3
       '@shikijs/transformers': 1.1.3
       '@types/markdown-it': 13.0.7

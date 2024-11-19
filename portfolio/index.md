@@ -8,13 +8,13 @@ hero:
   image:
     src: /images/me.jpg
     alt: Michel Carlos
-  # actions:
-  #   - theme: brand
-  #     text: About me
-  #     link: /about
-  #   - theme: alt
-  #     text: Why is this portfolio not finished? 🤔
-  #     link: /not-finished
+  actions:
+    - theme: brand
+      text: About me
+      link: /about
+    # - theme: alt
+    #   text: Why is this portfolio not finished? 🤔
+    #   link: /not-finished
 features:
   - icon:
       src: /icons/vue.svg
