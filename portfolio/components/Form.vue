@@ -1,10 +1,12 @@
 <script setup>
-import { Model } from "survey-core";
+import * as pkg from 'survey-core';
 import "survey-js-ui";
 import "survey-core/defaultV2.min.css";
 import { themeJson } from "./theme";
 import { json } from "./json";
 import { onMounted } from "vue";
+
+const { Model } = pkg;
 
 const survey = new Model(json);
 survey.applyTheme(themeJson);
