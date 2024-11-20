@@ -1,5 +1,5 @@
 <script setup>
-import * as pkg from 'survey-core';
+import * as pkg from "survey-core";
 import "survey-js-ui";
 import "survey-core/defaultV2.min.css";
 import { themeJson } from "./theme";
@@ -16,15 +16,23 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div
-    id="surveyElement"
-    width="100%"
-    height="100%"
-  />
+  <div id="surveyElement" width="100%" height="100%" />
 </template>
 
 <style>
-.sd-element__content.sd-question__content {
+#surveyElement
+  > div
+  > div
+  > form
+  > div
+  > div.sv-components-row
+  > div
+  > div
+  > div.sd-page.sd-body__page
+  > div
+  > div
+  > div
+  > div.sd-element__content.sd-question__content {
   min-height: 784px;
 }
 </style>
