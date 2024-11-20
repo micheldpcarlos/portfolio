@@ -25,6 +25,6 @@ onMounted(() => {
 
 <style>
 .sd-element__content.sd-question__content {
-  min-width: 784px;
+  min-height: 784px;
 }
 </style>
