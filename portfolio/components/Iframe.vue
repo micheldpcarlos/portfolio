@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
 
-
 // Reactive state for buttons and input
 const activeButtonIndex = ref(null); // Track the active button (null means no button is active)
 const inputValue = ref(""); // Reactive input value
@@ -20,6 +19,10 @@ onMounted(() => {
   const params = new URLSearchParams(window.location.search);
   title.value = params.get("title") || "Default Title";
 });
+
+function forceRefresh() {
+  location.reload(true); // Forces a reload from the server, bypassing the cache
+}
 </script>
 
 <template>
@@ -51,6 +54,11 @@ onMounted(() => {
         You typed: <span>{{ inputValue }}</span>
       </p>
     </div>
+    <a
+      @click="forceRefresh"
+      style="color: black; font-weight: 500; cursor: pointer"
+      >Refresh</a
+    >
   </div>
 </template>
 
@@ -75,5 +83,4 @@ onMounted(() => {
   margin-bottom: 16px;
   color: #333;
 }
-
 </style>
