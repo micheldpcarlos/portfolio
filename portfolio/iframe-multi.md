@@ -14,13 +14,18 @@ title.value = params.get("title") || "";
   
 const iframeTitle = (iframeTitle) => title.value? title.value + " - Inner " + iframeTitle : iframeTitle
 
+  function forceRefresh() {
+    location.reload(true); // Forces a reload from the server, bypassing the cache
+  }
+
 </script>
 
 <div class="main-container">
- <div style="width:200px; background:white; padding:16px"> 
+ <div v-if="!title" style="width:200px; background:white; padding:16px"> 
   <h1 style="color:black;font-size:20px;font-weight:500">Outside iframe (main frame)</h1>
   <button class="button" style="margin-top:16px">Button</button>
   <input type="text" class="input" style="margin-top:16px" />
+  <a @click="forceRefresh" style="color:black;font-weight:500; cursor: pointer">Refresh</a>
  </div>
   <div class="right-half">
     <div class="right-half-section">
