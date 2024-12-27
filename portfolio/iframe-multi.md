@@ -17,6 +17,11 @@ const iframeTitle = (iframeTitle) => title.value? title.value + " - Inner " + if
 </script>
 
 <div class="main-container">
+ <div style="width:200px; background:white; padding:16px"> 
+  <h1 style="color:black;font-size:20px;font-weight:500">Outside iframe (main frame)</h1>
+  <button class="button" style="margin-top:16px">Button</button>
+  <input type="text" class="input" style="margin-top:16px" />
+ </div>
   <div class="right-half">
     <div class="right-half-section">
       <iframe :src="`https://micheldpcarlos.com/iframe?title=${iframeTitle('Iframe 1')}`" width="100%" height="100%"/>
