@@ -51,14 +51,14 @@ function forceRefresh() {
         class="input"
       />
       <p class="input-display">
-        You typed: <span>{{ inputValue }}</span>
+        <a
+          @click="forceRefresh"
+          style="color: black; font-weight: 500; cursor: pointer"
+          >Refresh</a
+        >
+        || You typed: <span>{{ inputValue }}</span>
       </p>
     </div>
-    <a
-      @click="forceRefresh"
-      style="color: black; font-weight: 500; cursor: pointer"
-      >Refresh</a
-    >
   </div>
 </template>
 
