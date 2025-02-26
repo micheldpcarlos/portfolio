@@ -17,7 +17,7 @@ To me, creating a portfolio is about my period of **job search**, and now I unde
 
 ### Passive job search 👋🏼
 
-When interested in new opportunities, I start answering LinkedIn contacts, updating the PDF version of my resume, and making myself more visible to recruiters. I call this phase passive job search. I'm really interested, but I'm not investing too much time and effort into it.
+When interested in new opportunities, I start answering contacts, updating the PDF version of my resume, and making myself more visible to recruiters. I call this phase passive job search. I'm really interested, but I'm not investing too much time and effort into it.
 
 ### Active job search 👔
 

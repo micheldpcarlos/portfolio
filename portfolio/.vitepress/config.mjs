@@ -102,11 +102,6 @@ export default defineConfig({
     },
     socialLinks: [
       {
-        icon: "linkedin",
-        link: "https://www.linkedin.com/in/micheldpcarlos/",
-        ariaLabel: "Michel Carlos LinkedIn link",
-      },
-      {
         icon: "github",
         link: "https://github.com/micheldpcarlos",
         ariaLabel: "Michel Carlos GitHub link",
