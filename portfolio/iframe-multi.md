@@ -25,7 +25,7 @@ const iframeTitle = (iframeTitle) => title.value? title.value + " - Inner " + if
   <h1 style="color:black;font-size:20px;font-weight:500">Outside iframe (main frame)</h1>
   <button class="button" style="margin-top:16px">Button</button>
   <input type="text" class="input" style="margin-top:16px" />
-  <a @click="forceRefresh" style="color:black;font-weight:500; cursor: pointer">Refresh</a>
+  <a @click="forceRefresh" style="color:black;font-weight:500; cursor: pointer">Refresh 𝕏</a>
  </div>
   <div class="right-half">
     <div class="right-half-section">
