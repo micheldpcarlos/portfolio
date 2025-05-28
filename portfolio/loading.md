@@ -3,15 +3,14 @@ title: Navigation Test Page
 description: Test page for waitForNavigation function - 15 second load
 ---
 
-# 🧪 Navigation Test Page
 
 <div class="test-container">
-  <div id="page-status" class="status loading">
-    Page Loading...
-  </div>
-  
-  <div id="network-status" class="status loading">
-    Pending Requests: 0
+  <div class="status-grid">
+    <div id="page-status" class="status loading">
+      Page Loading...
+    </div>
+    <div id="network-status" class="status loading">Pending: 0</div>
+    <div id="timer" class="timer">⏱️ 0.0s</div>
   </div>
   
   <div class="progress-container">
@@ -21,16 +20,15 @@ description: Test page for waitForNavigation function - 15 second load
     <div id="progress-text">0% Complete</div>
   </div>
   
-    
-  <h2>Button Click Log</h2>
-  <div id="click-log" class="click-log">
-    Click the button above to see how many requests are pending...
-  </div>
-  
   <div class="button-container">
     <button id="test-button" class="test-button" @click="handleButtonClick">
       Click Me During Loading
     </button>
+  </div>
+    
+  <h2>Button Click Log</h2>
+  <div id="click-log" class="click-log">
+    Click the button above to see how many requests are pending...
   </div>
   
   <h2>Loading Resources...</h2>
@@ -41,11 +39,44 @@ description: Test page for waitForNavigation function - 15 second load
 </div>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 
 let totalRequests = 0
 let completedRequests = 0
 let pendingRequests = 0
+let startTime = null
+let timerInterval = null
+let isComplete = false
+
+const updateTimer = () => {
+  if (!startTime || isComplete) return
+  
+  const elapsed = (Date.now() - startTime) / 1000
+  const timerElement = document.getElementById('timer')
+  if (timerElement) {
+    timerElement.textContent = `⏱️ ${elapsed.toFixed(1)}s`
+  }
+}
+
+const stopTimer = () => {
+  isComplete = true
+  if (timerInterval) {
+    clearInterval(timerInterval)
+    timerInterval = null
+  }
+  
+  const timerElement = document.getElementById('timer')
+  if (timerElement) {
+    timerElement.className = 'timer complete'
+    const finalTime = ((Date.now() - startTime) / 1000).toFixed(1)
+    timerElement.textContent = `✅ ${finalTime}s`
+  }
+}
+
+const getElapsedSeconds = () => {
+  if (!startTime) return 0
+  return ((Date.now() - startTime) / 1000).toFixed(1)
+}
 
 const updateStatus = () => {
   const pageStatus = document.getElementById('page-status')
@@ -66,17 +97,20 @@ const updateStatus = () => {
   }
   
   if (networkStatus) {
-    networkStatus.textContent = `Pending Requests: ${pendingRequests}`
+    networkStatus.textContent = `Pending: ${pendingRequests}`
   }
   
   if (document.readyState === 'complete' && pendingRequests === 0) {
+    if (!isComplete) {
+      stopTimer()
+    }
     pageStatus.className = 'status complete'
-    pageStatus.textContent = '✅ Page Fully Loaded'
+    pageStatus.textContent = '✅ Complete'
     networkStatus.className = 'status complete'
-    networkStatus.textContent = '✅ All requests completed'
+    networkStatus.textContent = '✅ Done'
   } else {
     pageStatus.className = 'status loading'
-    pageStatus.textContent = `⏳ Page State: ${document.readyState}`
+    pageStatus.textContent = `⏳ ${document.readyState}`
     networkStatus.className = 'status loading'
   }
 }
@@ -103,7 +137,8 @@ const addToClickLog = (message) => {
 }
 
 const handleButtonClick = () => {
-  const message = `🖱️ Button clicked when ${pendingRequests} requests loading`
+  const elapsedSeconds = getElapsedSeconds()
+  const message = `🖱️ Button clicked at ${elapsedSeconds}s when ${pendingRequests} requests loading`
   addToClickLog(message)
 }
 
@@ -116,7 +151,7 @@ const addResourceToList = (name, status = 'loading') => {
   resourceDiv.id = `resource-${name}`
   resourceDiv.innerHTML = `
     <span class="resource-name">${name}</span>
-    <span class="resource-status">${status === 'loading' ? '⏳ Loading...' : '✅ Complete'}</span>
+    <span class="resource-status">${status === 'loading' ? '⏳' : '✅'}</span>
   `
   resourceList.appendChild(resourceDiv)
 }
@@ -127,7 +162,7 @@ const updateResourceStatus = (name, status) => {
     resourceElement.className = `resource-item ${status}`
     const statusSpan = resourceElement.querySelector('.resource-status')
     if (statusSpan) {
-      statusSpan.textContent = status === 'complete' ? '✅ Complete' : '⏳ Loading...'
+      statusSpan.textContent = status === 'complete' ? '✅' : '⏳'
     }
   }
 }
@@ -161,6 +196,10 @@ const makeRequest = (name, delay) => {
 }
 
 onMounted(() => {
+  // Start the timer
+  startTime = Date.now()
+  timerInterval = setInterval(updateTimer, 100) // Update every 100ms for smooth display
+  
   console.log(`[NavigationTest] 📄 Page mounted at ${new Date().toISOString()}`)
   console.log(`[NavigationTest] 📊 Initial readyState: ${document.readyState}`)
   
@@ -212,6 +251,12 @@ onMounted(() => {
   // Initial status update
   updateStatus()
 })
+
+onUnmounted(() => {
+  if (timerInterval) {
+    clearInterval(timerInterval)
+  }
+})
 </script>
 
 <style scoped>
@@ -221,14 +266,20 @@ onMounted(() => {
   padding: 20px;
 }
 
-.status {
-  padding: 15px;
+.status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
   margin: 10px 0;
-  border-radius: 8px;
+}
+
+.status {
+  padding: 12px;
+  border-radius: 6px;
   font-weight: bold;
   border: 2px solid;
   text-align: center;
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .status.loading {
@@ -243,18 +294,38 @@ onMounted(() => {
   border-color: #00b894;
 }
 
+.timer {
+  background: #e9ecef;
+  color: #495057;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  font-weight: bold;
+  border: 2px solid #6c757d;
+  text-align: center;
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.timer.complete {
+  background: #d4edda;
+  color: #155724;
+  border-color: #00b894;
+}
+
 .progress-container {
-  margin: 20px 0;
+  margin: 15px 0;
   text-align: center;
 }
 
 .progress-bar {
   width: 100%;
-  height: 20px;
+  height: 15px;
   background: #e9ecef;
-  border-radius: 10px;
+  border-radius: 8px;
   overflow: hidden;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .progress-fill {
@@ -266,23 +337,23 @@ onMounted(() => {
 
 #progress-text {
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
   color: #495057;
 }
 
 .button-container {
   text-align: center;
-  margin: 20px 0;
+  margin: 15px 0;
 }
 
 .test-button {
   background: #28a745;
   color: white;
   border: none;
-  padding: 15px 30px;
-  border-radius: 8px;
+  padding: 12px 25px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -299,54 +370,57 @@ onMounted(() => {
 }
 
 .resource-list {
-  margin: 20px 0;
+  margin: 15px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
 }
 
 .resource-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
-  margin: 4px 0;
+  padding: 6px 10px;
   border-radius: 4px;
   font-family: 'Courier New', monospace;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .resource-item.loading {
   background: #f8f9fa;
-  border-left: 4px solid #ffc107;
+  border-left: 3px solid #ffc107;
 }
 
 .resource-item.complete {
   background: #f8f9fa;
-  border-left: 4px solid #28a745;
+  border-left: 3px solid #28a745;
 }
 
 .resource-name {
   font-weight: bold;
+  font-size: 11px;
 }
 
 .resource-status {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .click-log {
   color: black;
   background: #f8f9fa;
   border: 2px solid #dee2e6;
-  padding: 15px;
-  margin: 20px 0;
-  border-radius: 8px;
+  padding: 12px;
+  margin: 15px 0;
+  border-radius: 6px;
   font-family: 'Courier New', monospace;
-  font-size: 14px;
-  max-height: 200px;
+  font-size: 13px;
+  max-height: 150px;
   overflow-y: auto;
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 .log-entry {
-  padding: 5px 0;
+  padding: 3px 0;
   border-bottom: 1px solid #e9ecef;
 }
 
@@ -356,17 +430,18 @@ onMounted(() => {
 
 .timestamp {
   color: #6c757d;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .message {
-  margin-left: 10px;
+  margin-left: 8px;
   color: #495057;
 }
 
 h2 {
   color: #2c3e50;
   text-align: center;
-  margin: 30px 0 20px 0;
+  margin: 25px 0 15px 0;
+  font-size: 20px;
 }
 </style>
