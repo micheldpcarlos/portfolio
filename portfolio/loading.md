@@ -47,6 +47,8 @@ let pendingRequests = 0
 let startTime = null
 let timerInterval = null
 let isComplete = false
+let initialBatchComplete = false
+let additionalBatchStarted = false
 
 const updateTimer = () => {
   if (!startTime || isComplete) return
@@ -167,6 +169,37 @@ const updateResourceStatus = (name, status) => {
   }
 }
 
+const checkInitialBatchComplete = () => {
+  if (!initialBatchComplete && pendingRequests === 0 && completedRequests === 10) {
+    initialBatchComplete = true
+    console.log(`[NavigationTest] 🎯 Initial batch complete! Starting 300ms pause...`)
+    
+    // Wait 300ms then start additional requests
+    setTimeout(() => {
+      if (!additionalBatchStarted) {
+        additionalBatchStarted = true
+        console.log(`[NavigationTest] 🔄 Starting additional 5 requests after 300ms pause`)
+        startAdditionalRequests()
+      }
+    }, 300)
+  }
+}
+
+const startAdditionalRequests = () => {
+  const additionalRequests = [
+    { name: 'lazy-components', delay: 1000 },      // completes after 1s
+    { name: 'background-data', delay: 2000 },      // completes after 2s  
+    { name: 'images-batch-3', delay: 3000 },       // completes after 3s
+    { name: 'final-validation', delay: 4000 },     // completes after 4s
+    { name: 'completion-check', delay: 5000 }      // completes after 5s
+  ]
+  
+  // Start all requests immediately (no setTimeout wrapper)
+  additionalRequests.forEach(({ name, delay }) => {
+    makeRequest(name, delay)
+  })
+}
+
 const makeRequest = (name, delay) => {
   totalRequests++
   pendingRequests++
@@ -184,6 +217,9 @@ const makeRequest = (name, delay) => {
         updateResourceStatus(name, 'complete')
         updateStatus()
         console.log(`[NavigationTest] ✅ Completed: ${name}`)
+        
+        // Check if initial batch is complete
+        checkInitialBatchComplete()
       })
       .catch(() => {
         completedRequests++
@@ -191,6 +227,9 @@ const makeRequest = (name, delay) => {
         updateResourceStatus(name, 'complete')
         updateStatus()
         console.log(`[NavigationTest] ✅ Completed (failed): ${name}`)
+        
+        // Check if initial batch is complete
+        checkInitialBatchComplete()
       })
   }, delay)
 }
@@ -215,8 +254,8 @@ onMounted(() => {
     updateStatus()
   })
   
-  // Create a 15-second loading sequence with staggered requests
-  const loadingSequence = [
+  // Create initial loading sequence - 10 requests over ~5 seconds
+  const initialLoadingSequence = [
     { name: 'css-framework', delay: 200 },
     { name: 'javascript-core', delay: 500 },
     { name: 'user-data', delay: 1000 },
@@ -224,29 +263,18 @@ onMounted(() => {
     { name: 'images-batch-1', delay: 2000 },
     { name: 'fonts-primary', delay: 2500 },
     { name: 'analytics-script', delay: 3000 },
-    { name: 'user-preferences', delay: 4000 },
-    { name: 'images-batch-2', delay: 5000 },
-    { name: 'third-party-widgets', delay: 6000 },
-    { name: 'lazy-components', delay: 7500 },
-    { name: 'background-data', delay: 9000 },
-    { name: 'images-batch-3', delay: 10500 },
-    { name: 'final-validation', delay: 12000 },
-    { name: 'cache-warmup', delay: 13500 },
-    { name: 'completion-check', delay: 14800 }
+    { name: 'user-preferences', delay: 3500 },
+    { name: 'images-batch-2', delay: 4000 },
+    { name: 'third-party-widgets', delay: 4500 }
   ]
   
-  console.log(`[NavigationTest] 🚀 Starting ${loadingSequence.length} requests over 15 seconds`)
+  console.log(`[NavigationTest] 🚀 Starting ${initialLoadingSequence.length} initial requests`)
+  console.log(`[NavigationTest] ⏳ Additional 5 requests will start after initial batch completes + 300ms pause`)
   
-  // Start all requests according to the sequence
-  loadingSequence.forEach(({ name, delay }) => {
+  // Start initial requests
+  initialLoadingSequence.forEach(({ name, delay }) => {
     makeRequest(name, delay)
   })
-  
-  // Final status update after everything should be done
-  setTimeout(() => {
-    console.log(`[NavigationTest] ⏰ 15-second mark reached at ${new Date().toISOString()}`)
-    updateStatus()
-  }, 15000)
   
   // Initial status update
   updateStatus()
