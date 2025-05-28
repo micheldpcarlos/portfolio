@@ -102,13 +102,8 @@ const updateStatus = () => {
     networkStatus.textContent = `Pending: ${pendingRequests}`
   }
   
-  // Only complete when all requests are done AND additional batch has been started
-  // This ensures we don't complete after just the initial batch
-  const allRequestsComplete = document.readyState === 'complete' && 
-                              pendingRequests === 0 && 
-                              (additionalBatchStarted || !initialBatchComplete)
-  
-  if (allRequestsComplete && completedRequests === totalRequests) {
+  // Only complete when ALL 15 requests are done (10 initial + 5 additional)
+  if (document.readyState === 'complete' && pendingRequests === 0 && completedRequests === 15) {
     if (!isComplete) {
       stopTimer()
     }
