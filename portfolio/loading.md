@@ -21,6 +21,12 @@ description: Test page for waitForNavigation function - 15 second load
     <div id="progress-text">0% Complete</div>
   </div>
   
+    
+  <h2>Button Click Log</h2>
+  <div id="click-log" class="click-log">
+    Click the button above to see how many requests are pending...
+  </div>
+  
   <div class="button-container">
     <button id="test-button" class="test-button" @click="handleButtonClick">
       Click Me During Loading
@@ -31,11 +37,7 @@ description: Test page for waitForNavigation function - 15 second load
   <div id="resource-list" class="resource-list">
     <!-- Resources will be added here dynamically -->
   </div>
-  
-  <h2>Button Click Log</h2>
-  <div id="click-log" class="click-log">
-    Click the button above to see how many requests are pending...
-  </div>
+
 </div>
 
 <script setup>
