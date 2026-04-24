@@ -768,4 +768,87 @@ const activeMember = computed(() =>
   opacity: 0;
   transform: translateY(-12px);
 }
+
+/* ---- Mobile polish (≤ 719px) ---- */
+@media (max-width: 719px) {
+  .tv-root {
+    padding: 24px 16px 48px;
+  }
+
+  /* Landing */
+  .tv-title {
+    font-size: 40px;
+  }
+  .tv-lede {
+    font-size: 15px;
+  }
+  .tv-card {
+    padding: 18px 18px 16px;
+  }
+  .tv-card-name {
+    font-size: 20px;
+  }
+
+  /* Intro */
+  .tv-intro-name {
+    font-size: 32px;
+    line-height: 1.1;
+  }
+  .tv-intro-body {
+    padding: 20px 0 32px;
+  }
+  .tv-intro-section {
+    margin-top: 24px;
+  }
+  .tv-intro-copy {
+    font-size: 15px;
+  }
+  .tv-intro-actions .tv-primary-btn {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+
+  /* Picker header — stack title above buttons when space is tight */
+  .tv-picker-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 12px;
+  }
+  .tv-picker-name {
+    font-size: 22px;
+  }
+  .tv-picker-head-actions {
+    align-self: flex-end;
+  }
+  .tv-stage {
+    padding: 20px 0;
+  }
+  .tv-match {
+    margin-bottom: 16px;
+  }
+
+  /* Complete */
+  .tv-complete {
+    padding: 24px 0;
+  }
+  .tv-complete-name {
+    font-size: 28px;
+    margin-top: 4px;
+    margin-bottom: 18px;
+  }
+  .tv-winner-img {
+    width: min(320px, 85vw);
+  }
+  .tv-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+  .tv-actions .tv-outline-btn,
+  .tv-actions .tv-primary-btn {
+    width: 100%;
+  }
+}
 </style>

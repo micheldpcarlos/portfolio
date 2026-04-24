@@ -69,9 +69,18 @@ function state(seed) {
 .pair-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 20px;
+  gap: 16px;
   width: min(1100px, 100%);
   margin: 0 auto;
+}
+/* Mobile: cap each stacked image at 42vh wide (aspect-ratio 1:1 keeps it square)
+   so both candidates stay visible in the same viewport for easy comparison. */
+@media (max-width: 719px) {
+  .pair-btn {
+    max-width: min(100%, 42vh);
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 @media (min-width: 720px) {
   .pair-grid {
