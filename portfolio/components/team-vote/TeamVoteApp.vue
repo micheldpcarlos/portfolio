@@ -19,7 +19,7 @@ const TEAM = {
     wardrobe:
       "Navy blazer over a crisp white open-collar shirt.",
     roleAtBrevid:
-      "Revenue strategy, idea validation, business model. Ruthless about market fit — will kill ideas the moment evidence says they won't work.",
+      "Runs the business side. Decides what Brevid should build and who'll pay for it. Quick to kill ideas that aren't working.",
   },
   developer: {
     name: "Isla Shipley",
@@ -30,7 +30,7 @@ const TEAM = {
     wardrobe:
       "Dark charcoal crewneck sweater with subtle knit texture.",
     roleAtBrevid:
-      "Full-stack TypeScript engineering. Backend-first architecture, video pipelines, Zendesk API orchestration. Clean code as a product decision — bad foundations kill products slowly.",
+      "Writes the code behind Brevid — the parts you see and the engine doing the heavy lifting out of sight. Picky about getting it right the first time so nothing breaks later.",
   },
   marketing: {
     name: "Chirag Pitchani",
@@ -41,7 +41,7 @@ const TEAM = {
     wardrobe:
       "Fitted slate blue henley, sleeves pushed up, top button open. Matte black watch on left wrist.",
     roleAtBrevid:
-      "Positioning, campaigns, sales enablement, Zendesk Marketplace strategy. Every feature is a marketing opportunity. Revenue is the scoreboard — impressions don't pay the bills.",
+      "Gets the right customers to notice Brevid and choose it. Only counts wins that end in actual sales — everything else is just noise.",
   },
   tester: {
     name: "Haru Coverdale",
@@ -52,7 +52,7 @@ const TEAM = {
     wardrobe:
       "Black fine-knit turtleneck.",
     roleAtBrevid:
-      "Quality assurance, test strategy, AI output evaluation. Nothing ships without sign-off. Automation is leverage — manual testing doesn't scale; regression is the enemy.",
+      "The last person between a bug and a customer. Finds the weird edge cases and won't let them through.",
   },
   designer: {
     name: "Eunji Gridley",
@@ -63,7 +63,7 @@ const TEAM = {
     wardrobe:
       "Cream structured blouse with a subtle geometric pin on the collar.",
     roleAtBrevid:
-      "UI/UX for support admins with 200 open tickets and 5 minutes. Usability over awards. Every pixel must serve a purpose — no element survives unless it earns its place.",
+      "Shapes how Brevid looks and feels. Makes every screen obvious enough that busy customers can get things done without stopping to think.",
   },
   genai: {
     name: "Lucia Nodari",
@@ -74,7 +74,7 @@ const TEAM = {
     wardrobe:
       "Black zip-up hoodie over a white crewneck tee.",
     roleAtBrevid:
-      "Inference pipelines — Flux 2 portraits, OmniVoice TTS, planned Wan2.1 InfinityTalk for talking heads. Workflows are code: version, test, document. Pin everything for reproducibility.",
+      "Runs the AI systems that actually make the videos — the voices, the faces, the whole thing. Focused on getting reliable results every time.",
   },
 };
 
