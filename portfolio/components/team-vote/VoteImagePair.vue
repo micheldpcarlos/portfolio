@@ -73,11 +73,11 @@ function state(seed) {
   width: min(1100px, 100%);
   margin: 0 auto;
 }
-/* Mobile: cap each stacked image at 42vh wide (aspect-ratio 1:1 keeps it square)
-   so both candidates stay visible in the same viewport for easy comparison. */
+/* Mobile: cap each stacked image at 38vh wide (aspect-ratio 1:1 keeps it square)
+   so both candidates + the progress footer stay visible in the same viewport. */
 @media (max-width: 719px) {
   .pair-btn {
-    max-width: min(100%, 42vh);
+    max-width: min(100%, 38vh);
     margin-left: auto;
     margin-right: auto;
   }

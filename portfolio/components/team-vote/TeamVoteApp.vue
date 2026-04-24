@@ -15,9 +15,7 @@ const TEAM = {
     roleLabel: "Co-Founder",
     meta: "41 · Mixed Black/Portuguese heritage",
     description:
-      "Close-cropped salt-and-pepper hair, neatly trimmed beard. Strong jawline, warm brown eyes with crow's feet from smiling. Broad shoulders. Composed, decisive energy — direct eye contact, weighs his words, calls it straight.",
-    wardrobe:
-      "Navy blazer over a crisp white open-collar shirt.",
+      "The person you'd want leading a pitch meeting. Steady, decisive, no wasted words. Clearly been through a few companies before, knows the tough questions, and isn't afraid to give the honest answer.",
     roleAtBrevid:
       "Runs the business side. Decides what Brevid should build and who'll pay for it. Quick to kill ideas that aren't working.",
   },
@@ -26,9 +24,7 @@ const TEAM = {
     roleLabel: "Developer",
     meta: "28 · Irish",
     description:
-      "Shoulder-length dark brown hair in a sharp side part, one side tucked behind the ear. Fair skin with light freckles across the bridge of the nose. Green eyes behind bold tortoiseshell glasses. Focused expression — the person you trust to ship on Friday and tell you exactly why you shouldn't.",
-    wardrobe:
-      "Dark charcoal crewneck sweater with subtle knit texture.",
+      "Reads as senior rather than junior. Focused, a bit dry, quick to spot what might break. The kind of engineer you trust with the hard problems — not flashy, just quietly thorough.",
     roleAtBrevid:
       "Writes the code behind Brevid — the parts you see and the engine doing the heavy lifting out of sight. Picky about getting it right the first time so nothing breaks later.",
   },
@@ -37,9 +33,7 @@ const TEAM = {
     roleLabel: "Marketing",
     meta: "32 · South Asian Indian",
     description:
-      "Short-cropped black hair with a textured fade on the sides, longer and slightly messy on top. Warm brown skin, dark brown eyes with subtle laugh lines from smiling often, light stubble. Lean athletic build. Warm genuine smile — the person who makes you excited about a spreadsheet.",
-    wardrobe:
-      "Fitted slate blue henley, sleeves pushed up, top button open. Matte black watch on left wrist.",
+      "Warm, open, genuinely interested in people. Not a slick-salesperson archetype — more like someone who's fun to have in the room and actually explains things. Positive energy without being performative.",
     roleAtBrevid:
       "Gets the right customers to notice Brevid and choose it. Only counts wins that end in actual sales — everything else is just noise.",
   },
@@ -48,9 +42,7 @@ const TEAM = {
     roleLabel: "Tester",
     meta: "28 · Biracial Japanese/Scandinavian · non-binary",
     description:
-      "Textured undercut with the longer top swept to one side, dark with subtle highlights. Light olive skin, expressive dark eyes. Small silver hoop earring. Quiet intensity — holds the product to a higher standard than anyone asked for.",
-    wardrobe:
-      "Black fine-knit turtleneck.",
+      "Quietly watchful. Says less than they notice. Precise, thoughtful, just a bit merciless about quality — the kind of person who catches the thing everyone else missed.",
     roleAtBrevid:
       "The last person between a bug and a customer. Finds the weird edge cases and won't let them through.",
   },
@@ -59,9 +51,7 @@ const TEAM = {
     roleLabel: "Designer",
     meta: "34 · Korean",
     description:
-      "Straight black hair in a precise shoulder-length bob. Dark eyes, high cheekbones. Composed visual judgment — knows when a layout is done before anyone else does.",
-    wardrobe:
-      "Cream structured blouse with a subtle geometric pin on the collar.",
+      "Composed, confident, aesthetically certain. Someone with strong opinions about how things should look — and the patience to defend them calmly. Poised rather than loud.",
     roleAtBrevid:
       "Shapes how Brevid looks and feels. Makes every screen obvious enough that busy customers can get things done without stopping to think.",
   },
@@ -70,9 +60,7 @@ const TEAM = {
     roleLabel: "GenAI Specialist",
     meta: "33 · Neapolitan Italian",
     description:
-      "Dark wavy hair, shoulder length, often tucked behind one ear. Olive skin, warm hazel-green eyes, strong brows. Small beauty mark near the left cheekbone. Sharp but relaxed presence — explains diffusion math while tweaking a workflow.",
-    wardrobe:
-      "Black zip-up hoodie over a white crewneck tee.",
+      "Deep-in-the-math but approachable. Relaxed and curious rather than intense — the kind of person who can explain something complicated without making you feel dumb.",
     roleAtBrevid:
       "Runs the AI systems that actually make the videos — the voices, the faces, the whole thing. Focused on getting reliable results every time.",
   },
@@ -259,22 +247,20 @@ const activeMember = computed(() =>
         <div class="tv-intro-body">
           <p class="tv-kicker">{{ activeMember.roleLabel }}</p>
           <h2 class="tv-intro-name">{{ activeMember.name }}</h2>
-          <p class="tv-intro-meta">{{ activeMember.meta }}</p>
 
           <section class="tv-intro-section">
-            <h3 class="tv-intro-label">About</h3>
+            <h3 class="tv-intro-label">The vibe</h3>
             <p class="tv-intro-copy">{{ activeMember.description }}</p>
           </section>
 
           <section class="tv-intro-section">
-            <h3 class="tv-intro-label">Default wardrobe</h3>
-            <p class="tv-intro-copy">{{ activeMember.wardrobe }}</p>
-          </section>
-
-          <section class="tv-intro-section">
-            <h3 class="tv-intro-label">Role at Brevid</h3>
+            <h3 class="tv-intro-label">What they do</h3>
             <p class="tv-intro-copy">{{ activeMember.roleAtBrevid }}</p>
           </section>
+
+          <p class="tv-intro-prompt">
+            Pick the face that feels right for someone in this role — two at a time, last one standing wins.
+          </p>
 
           <div v-if="typeof heroSeeds[activeRole] === 'number'" class="tv-intro-locked">
             <p class="tv-intro-locked-line">
@@ -324,6 +310,17 @@ const activeMember = computed(() =>
           </div>
         </header>
 
+        <!-- Mobile-only floating close button (header is hidden on mobile) -->
+        <button
+          v-if="!isComplete"
+          type="button"
+          class="tv-floating-close"
+          aria-label="Back to roster"
+          @click="goToLanding"
+        >
+          ×
+        </button>
+
         <!-- TOURNAMENT IN PROGRESS -->
         <Transition name="slide-fade" mode="out-in">
           <div v-if="!isComplete && currentPair" :key="matchNumber" class="tv-stage">
@@ -372,6 +369,9 @@ const activeMember = computed(() =>
           <div class="tv-progress">
             <div class="tv-progress-fill" :style="{ width: progress + '%' }"></div>
           </div>
+          <span class="tv-progress-label">
+            {{ matchNumber }} / {{ totalMatches }}
+          </span>
         </footer>
       </div>
     </Transition>
@@ -552,6 +552,15 @@ const activeMember = computed(() =>
   color: var(--vp-c-text-1);
   margin: 0;
 }
+.tv-intro-prompt {
+  margin: 24px 0 0;
+  font-size: 13px;
+  color: var(--vp-c-text-3);
+  font-style: italic;
+}
+.tv-floating-close {
+  display: none; /* shown only on mobile — see media query below */
+}
 .tv-intro-locked {
   margin-top: 32px;
   padding: 16px 18px;
@@ -629,11 +638,15 @@ const activeMember = computed(() =>
 .tv-progress-wrap {
   padding-top: 16px;
   border-top: 1px solid var(--vp-c-divider);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 560px;
+  margin: 0 auto;
 }
 .tv-progress {
-  max-width: 480px;
+  flex: 1;
   height: 6px;
-  margin: 0 auto;
   background: var(--vp-c-bg-soft);
   border-radius: 999px;
   overflow: hidden;
@@ -642,6 +655,13 @@ const activeMember = computed(() =>
   height: 100%;
   background: linear-gradient(90deg, var(--vp-c-brand-1), var(--vp-c-brand-2));
   transition: width 350ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.tv-progress-label {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  color: var(--vp-c-text-3);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
 }
 
 /* ---- Complete ---- */
@@ -772,7 +792,7 @@ const activeMember = computed(() =>
 /* ---- Mobile polish (≤ 719px) ---- */
 @media (max-width: 719px) {
   .tv-root {
-    padding: 24px 16px 48px;
+    padding: 20px 14px 24px;
   }
 
   /* Landing */
@@ -809,24 +829,58 @@ const activeMember = computed(() =>
     font-size: 14px;
   }
 
-  /* Picker header — stack title above buttons when space is tight */
+  /* Picker — hide top chrome entirely so the two candidate images stay
+     above the fold. A floating ×-button replaces the header nav. */
+  .tv-picker {
+    min-height: calc(100vh - 44px);
+    position: relative;
+  }
   .tv-picker-head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    padding-bottom: 12px;
-  }
-  .tv-picker-name {
-    font-size: 22px;
-  }
-  .tv-picker-head-actions {
-    align-self: flex-end;
+    display: none;
   }
   .tv-stage {
-    padding: 20px 0;
+    padding: 8px 0 4px;
   }
   .tv-match {
-    margin-bottom: 16px;
+    display: none; /* match count sits next to the progress bar instead */
+  }
+  .tv-progress-wrap {
+    padding-top: 10px;
+    border-top: none;
+    max-width: none;
+  }
+
+  /* Floating close button — replaces the picker header nav on mobile */
+  .tv-floating-close {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--vp-c-divider);
+    background: color-mix(in srgb, var(--vp-c-bg) 85%, transparent);
+    backdrop-filter: blur(8px);
+    color: var(--vp-c-text-2);
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 4px;
+    transition:
+      transform 160ms ease-out,
+      background-color 160ms ease-out,
+      color 160ms ease-out;
+  }
+  .tv-floating-close:active {
+    transform: scale(0.94);
+  }
+  .tv-floating-close:hover {
+    background: var(--vp-c-bg-soft);
+    color: var(--vp-c-text-1);
   }
 
   /* Complete */
