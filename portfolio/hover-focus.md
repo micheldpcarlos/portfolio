@@ -12,6 +12,41 @@ const cursorY = ref(0)
 const cursorActive = ref(false)
 const dropdownOpen = ref(false)
 
+const textInput = ref('')
+const textareaInput = ref('')
+const selectValue = ref('')
+const radioValue = ref('')
+const checkboxValues = ref([])
+const rangeValue = ref(50)
+const colorValue = ref('#ff2d95')
+const dateValue = ref('')
+const submittedSummary = ref('')
+
+const handleFormSubmit = () => {
+  submittedSummary.value = JSON.stringify({
+    text: textInput.value,
+    textarea: textareaInput.value,
+    select: selectValue.value,
+    radio: radioValue.value,
+    checkboxes: checkboxValues.value,
+    range: rangeValue.value,
+    color: colorValue.value,
+    date: dateValue.value,
+  }, null, 2)
+}
+
+const handleFormReset = () => {
+  textInput.value = ''
+  textareaInput.value = ''
+  selectValue.value = ''
+  radioValue.value = ''
+  checkboxValues.value = []
+  rangeValue.value = 50
+  colorValue.value = '#ff2d95'
+  dateValue.value = ''
+  submittedSummary.value = ''
+}
+
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value
 }
@@ -144,6 +179,190 @@ onUnmounted(() => {
       </ul>
     </div>
     <p class="hint">Tip: Tab through the items — menu stays open. Tab past the last one (or click outside) — menu closes.</p>
+  </section>
+
+  <section class="form-section">
+    <h2>Native form elements</h2>
+    <p class="hint">Test native interactions: typing, selecting, toggling, sliding, picking dates/colors.</p>
+
+    <form
+      class="form"
+      data-testid="native-form"
+      @submit.prevent="handleFormSubmit"
+      @reset.prevent="handleFormReset"
+      @mouseenter="cursorActive = true"
+      @mouseleave="cursorActive = false"
+    >
+      <div class="field">
+        <label for="text-input">Text input</label>
+        <input
+          id="text-input"
+          type="text"
+          v-model="textInput"
+          placeholder="Type something..."
+          data-testid="text-input"
+        />
+      </div>
+
+      <div class="field">
+        <label for="email-input">Email input</label>
+        <input
+          id="email-input"
+          type="email"
+          placeholder="you@example.com"
+          data-testid="email-input"
+        />
+      </div>
+
+      <div class="field">
+        <label for="password-input">Password</label>
+        <input
+          id="password-input"
+          type="password"
+          placeholder="••••••••"
+          data-testid="password-input"
+        />
+      </div>
+
+      <div class="field">
+        <label for="number-input">Number</label>
+        <input
+          id="number-input"
+          type="number"
+          min="0"
+          max="100"
+          step="1"
+          placeholder="0-100"
+          data-testid="number-input"
+        />
+      </div>
+
+      <div class="field">
+        <label for="textarea">Textarea</label>
+        <textarea
+          id="textarea"
+          v-model="textareaInput"
+          rows="4"
+          placeholder="Tell us a story..."
+          data-testid="textarea-input"
+        ></textarea>
+      </div>
+
+      <div class="field">
+        <label for="select">Select</label>
+        <select
+          id="select"
+          v-model="selectValue"
+          data-testid="select-input"
+        >
+          <option value="" disabled>Choose an option</option>
+          <option value="alpha">Alpha</option>
+          <option value="beta">Beta</option>
+          <option value="gamma">Gamma</option>
+          <option value="delta">Delta</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="multi-select">Select (multiple)</label>
+        <select
+          id="multi-select"
+          multiple
+          size="4"
+          data-testid="multi-select-input"
+        >
+          <option value="red">Red</option>
+          <option value="green">Green</option>
+          <option value="blue">Blue</option>
+          <option value="yellow">Yellow</option>
+        </select>
+      </div>
+
+      <fieldset class="field">
+        <legend>Radio group</legend>
+        <label class="inline">
+          <input type="radio" name="plan" value="free" v-model="radioValue" data-testid="radio-free" />
+          Free
+        </label>
+        <label class="inline">
+          <input type="radio" name="plan" value="pro" v-model="radioValue" data-testid="radio-pro" />
+          Pro
+        </label>
+        <label class="inline">
+          <input type="radio" name="plan" value="enterprise" v-model="radioValue" data-testid="radio-enterprise" />
+          Enterprise
+        </label>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>Checkboxes</legend>
+        <label class="inline">
+          <input type="checkbox" value="news" v-model="checkboxValues" data-testid="checkbox-news" />
+          Newsletter
+        </label>
+        <label class="inline">
+          <input type="checkbox" value="updates" v-model="checkboxValues" data-testid="checkbox-updates" />
+          Product updates
+        </label>
+        <label class="inline">
+          <input type="checkbox" value="offers" v-model="checkboxValues" data-testid="checkbox-offers" />
+          Special offers
+        </label>
+      </fieldset>
+
+      <div class="field">
+        <label for="range">Range ({{ rangeValue }})</label>
+        <input
+          id="range"
+          type="range"
+          min="0"
+          max="100"
+          v-model.number="rangeValue"
+          data-testid="range-input"
+        />
+      </div>
+
+      <div class="field row">
+        <div class="field grow">
+          <label for="color">Color</label>
+          <input
+            id="color"
+            type="color"
+            v-model="colorValue"
+            data-testid="color-input"
+          />
+        </div>
+        <div class="field grow">
+          <label for="date">Date</label>
+          <input
+            id="date"
+            type="date"
+            v-model="dateValue"
+            data-testid="date-input"
+          />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="file">File</label>
+        <input
+          id="file"
+          type="file"
+          data-testid="file-input"
+        />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="button" data-testid="form-submit">Submit</button>
+        <button type="reset" class="link" data-testid="form-reset">Reset</button>
+      </div>
+
+      <pre
+        v-if="submittedSummary"
+        class="form-summary"
+        data-testid="form-summary"
+      >{{ submittedSummary }}</pre>
+    </form>
   </section>
 </div>
 
@@ -451,5 +670,178 @@ onUnmounted(() => {
   margin-top: 20px;
   color: #a1a1aa;
   font-size: 0.9rem;
+}
+
+.form-section {
+  max-width: 640px;
+  margin: 64px auto 0;
+  text-align: center;
+}
+
+.form-section h2 {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+  color: #f5f5f7;
+}
+
+.form {
+  margin-top: 24px;
+  padding: 28px;
+  background: #1c1c24;
+  border: 2px solid #2a2a35;
+  border-radius: 12px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.field.row {
+  flex-direction: row;
+  gap: 18px;
+}
+
+.field.grow {
+  flex: 1;
+}
+
+.field > label,
+.field > legend {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #f5f5f7;
+  padding: 0;
+}
+
+.field .inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 16px;
+  font-size: 0.95rem;
+  color: #f5f5f7;
+  font-weight: 400;
+}
+
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="password"],
+.form input[type="number"],
+.form input[type="date"],
+.form textarea,
+.form select {
+  width: 100%;
+  padding: 10px 12px;
+  background: #0f0f14;
+  color: #f5f5f7;
+  border: 2px solid #2a2a35;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form input[type="text"]:hover,
+.form input[type="email"]:hover,
+.form input[type="password"]:hover,
+.form input[type="number"]:hover,
+.form input[type="date"]:hover,
+.form textarea:hover,
+.form select:hover {
+  border-color: #ff2d95;
+}
+
+.form input[type="text"]:focus,
+.form input[type="email"]:focus,
+.form input[type="password"]:focus,
+.form input[type="number"]:focus,
+.form input[type="date"]:focus,
+.form textarea:focus,
+.form select:focus {
+  border-color: #00ffc6;
+  box-shadow: 0 0 0 3px rgba(0, 255, 198, 0.25);
+}
+
+.form textarea {
+  resize: vertical;
+  min-height: 88px;
+}
+
+.form input[type="range"] {
+  width: 100%;
+  accent-color: #ff2d95;
+}
+
+.form input[type="color"] {
+  width: 100%;
+  height: 40px;
+  padding: 2px;
+  background: #0f0f14;
+  border: 2px solid #2a2a35;
+  border-radius: 8px;
+  outline: none;
+}
+
+.form input[type="color"]:focus {
+  border-color: #00ffc6;
+  box-shadow: 0 0 0 3px rgba(0, 255, 198, 0.25);
+}
+
+.form input[type="radio"],
+.form input[type="checkbox"] {
+  accent-color: #00ffc6;
+  width: 18px;
+  height: 18px;
+}
+
+.form input[type="file"] {
+  color: #f5f5f7;
+  font-family: inherit;
+}
+
+.form input[type="file"]::file-selector-button {
+  margin-right: 12px;
+  padding: 8px 14px;
+  background: #00ffc6;
+  color: #0f0f14;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: background 0.2s ease;
+}
+
+.form input[type="file"]::file-selector-button:hover {
+  background: #ff2d95;
+  color: #f5f5f7;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.form-summary {
+  margin: 0;
+  padding: 14px;
+  background: #0f0f14;
+  border: 1px dashed #00ffc6;
+  border-radius: 8px;
+  color: #00ffc6;
+  font-size: 0.85rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: pre-wrap;
+  overflow-x: auto;
 }
 </style>
