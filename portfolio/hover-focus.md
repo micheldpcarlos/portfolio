@@ -184,77 +184,30 @@ onUnmounted(() => {
   <section class="form-section">
     <h2>Native form elements</h2>
     <p class="hint">Test native interactions: typing, selecting, toggling, sliding, picking dates/colors.</p>
-
-    <form
-      class="form"
-      data-testid="native-form"
-      @submit.prevent="handleFormSubmit"
-      @reset.prevent="handleFormReset"
-      @mouseenter="cursorActive = true"
-      @mouseleave="cursorActive = false"
-    >
+    <form class="form" data-testid="native-form" @submit.prevent="handleFormSubmit" @reset.prevent="handleFormReset" @mouseenter="cursorActive = true" @mouseleave="cursorActive = false">
       <div class="field">
         <label for="text-input">Text input</label>
-        <input
-          id="text-input"
-          type="text"
-          v-model="textInput"
-          placeholder="Type something..."
-          data-testid="text-input"
-        />
+        <input id="text-input" type="text" v-model="textInput" placeholder="Type something..." data-testid="text-input" />
       </div>
-
       <div class="field">
         <label for="email-input">Email input</label>
-        <input
-          id="email-input"
-          type="email"
-          placeholder="you@example.com"
-          data-testid="email-input"
-        />
+        <input id="email-input" type="email" placeholder="you@example.com" data-testid="email-input" />
       </div>
-
       <div class="field">
         <label for="password-input">Password</label>
-        <input
-          id="password-input"
-          type="password"
-          placeholder="••••••••"
-          data-testid="password-input"
-        />
+        <input id="password-input" type="password" placeholder="••••••••" data-testid="password-input" />
       </div>
-
       <div class="field">
         <label for="number-input">Number</label>
-        <input
-          id="number-input"
-          type="number"
-          min="0"
-          max="100"
-          step="1"
-          placeholder="0-100"
-          data-testid="number-input"
-        />
+        <input id="number-input" type="number" min="0" max="100" step="1" placeholder="0-100" data-testid="number-input" />
       </div>
-
       <div class="field">
         <label for="textarea">Textarea</label>
-        <textarea
-          id="textarea"
-          v-model="textareaInput"
-          rows="4"
-          placeholder="Tell us a story..."
-          data-testid="textarea-input"
-        ></textarea>
+        <textarea id="textarea" v-model="textareaInput" rows="4" placeholder="Tell us a story..." data-testid="textarea-input"></textarea>
       </div>
-
       <div class="field">
         <label for="select">Select</label>
-        <select
-          id="select"
-          v-model="selectValue"
-          data-testid="select-input"
-        >
+        <select id="select" v-model="selectValue" data-testid="select-input">
           <option value="" disabled>Choose an option</option>
           <option value="alpha">Alpha</option>
           <option value="beta">Beta</option>
@@ -262,106 +215,50 @@ onUnmounted(() => {
           <option value="delta">Delta</option>
         </select>
       </div>
-
       <div class="field">
         <label for="multi-select">Select (multiple)</label>
-        <select
-          id="multi-select"
-          multiple
-          size="4"
-          data-testid="multi-select-input"
-        >
+        <select id="multi-select" multiple size="4" data-testid="multi-select-input">
           <option value="red">Red</option>
           <option value="green">Green</option>
           <option value="blue">Blue</option>
           <option value="yellow">Yellow</option>
         </select>
       </div>
-
       <fieldset class="field">
         <legend>Radio group</legend>
-        <label class="inline">
-          <input type="radio" name="plan" value="free" v-model="radioValue" data-testid="radio-free" />
-          Free
-        </label>
-        <label class="inline">
-          <input type="radio" name="plan" value="pro" v-model="radioValue" data-testid="radio-pro" />
-          Pro
-        </label>
-        <label class="inline">
-          <input type="radio" name="plan" value="enterprise" v-model="radioValue" data-testid="radio-enterprise" />
-          Enterprise
-        </label>
+        <label class="inline"><input type="radio" name="plan" value="free" v-model="radioValue" data-testid="radio-free" /> Free</label>
+        <label class="inline"><input type="radio" name="plan" value="pro" v-model="radioValue" data-testid="radio-pro" /> Pro</label>
+        <label class="inline"><input type="radio" name="plan" value="enterprise" v-model="radioValue" data-testid="radio-enterprise" /> Enterprise</label>
       </fieldset>
-
       <fieldset class="field">
         <legend>Checkboxes</legend>
-        <label class="inline">
-          <input type="checkbox" value="news" v-model="checkboxValues" data-testid="checkbox-news" />
-          Newsletter
-        </label>
-        <label class="inline">
-          <input type="checkbox" value="updates" v-model="checkboxValues" data-testid="checkbox-updates" />
-          Product updates
-        </label>
-        <label class="inline">
-          <input type="checkbox" value="offers" v-model="checkboxValues" data-testid="checkbox-offers" />
-          Special offers
-        </label>
+        <label class="inline"><input type="checkbox" value="news" v-model="checkboxValues" data-testid="checkbox-news" /> Newsletter</label>
+        <label class="inline"><input type="checkbox" value="updates" v-model="checkboxValues" data-testid="checkbox-updates" /> Product updates</label>
+        <label class="inline"><input type="checkbox" value="offers" v-model="checkboxValues" data-testid="checkbox-offers" /> Special offers</label>
       </fieldset>
-
       <div class="field">
         <label for="range">Range ({{ rangeValue }})</label>
-        <input
-          id="range"
-          type="range"
-          min="0"
-          max="100"
-          v-model.number="rangeValue"
-          data-testid="range-input"
-        />
+        <input id="range" type="range" min="0" max="100" v-model.number="rangeValue" data-testid="range-input" />
       </div>
-
       <div class="field row">
         <div class="field grow">
           <label for="color">Color</label>
-          <input
-            id="color"
-            type="color"
-            v-model="colorValue"
-            data-testid="color-input"
-          />
+          <input id="color" type="color" v-model="colorValue" data-testid="color-input" />
         </div>
         <div class="field grow">
           <label for="date">Date</label>
-          <input
-            id="date"
-            type="date"
-            v-model="dateValue"
-            data-testid="date-input"
-          />
+          <input id="date" type="date" v-model="dateValue" data-testid="date-input" />
         </div>
       </div>
-
       <div class="field">
         <label for="file">File</label>
-        <input
-          id="file"
-          type="file"
-          data-testid="file-input"
-        />
+        <input id="file" type="file" data-testid="file-input" />
       </div>
-
       <div class="form-actions">
         <button type="submit" class="button" data-testid="form-submit">Submit</button>
         <button type="reset" class="link" data-testid="form-reset">Reset</button>
       </div>
-
-      <pre
-        v-if="submittedSummary"
-        class="form-summary"
-        data-testid="form-summary"
-      >{{ submittedSummary }}</pre>
+      <pre v-if="submittedSummary" class="form-summary" data-testid="form-summary">{{ submittedSummary }}</pre>
     </form>
   </section>
 </div>
