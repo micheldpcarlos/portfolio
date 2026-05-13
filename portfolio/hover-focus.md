@@ -111,6 +111,30 @@ const onPointerUp = () => {
   }
 }
 
+// Touch handlers run alongside the pointer handlers so synthetic touch
+// gestures (e.g. CDP Input.dispatchTouchEvent) reach the carousel even when
+// Chrome doesn't translate them into pointer events. For real mouse/pen
+// gestures only the pointer handlers fire; for real finger touch both fire
+// and converge on the same state (idempotent).
+const onTouchStart = (e, card) => {
+  if (card.id !== topCardId()) return
+  const t = e.touches && e.touches[0]
+  if (!t) return
+  dragId.value = card.id
+  dragStartX.value = t.clientX
+  dragOffset.value = 0
+  dragging.value = true
+}
+
+const onTouchMove = (e) => {
+  if (!dragging.value) return
+  const t = e.touches && e.touches[0]
+  if (!t) return
+  dragOffset.value = t.clientX - dragStartX.value
+}
+
+const onTouchEnd = () => onPointerUp()
+
 const swipeProgrammatic = (direction) => {
   const id = topCardId()
   if (!id) return
@@ -186,9 +210,9 @@ onUnmounted(() => {
   <section class="swipe-section" data-testid="swipe-section">
     <h2>Swipeable cards</h2>
     <p class="hint">Drag the top card left or right. Past 120px it dismisses. Touch, mouse, or pen all work.</p>
-    <div class="swipe-stage" @pointermove="onPointerMove" @pointerup="onPointerUp" @pointercancel="onPointerUp" @pointerleave="onPointerUp">
+    <div class="swipe-stage" @pointermove="onPointerMove" @pointerup="onPointerUp" @pointercancel="onPointerUp" @pointerleave="onPointerUp" @touchmove="onTouchMove" @touchend="onTouchEnd" @touchcancel="onTouchEnd">
       <div v-if="!swipeCards.length" class="swipe-empty" data-testid="swipe-empty">No more cards. Hit reset to bring them back.</div>
-      <div v-for="(card, index) in swipeCards" :key="card.id" class="swipe-card" :class="{ top: card.id === topCardId(), dragging: card.id === dragId && dragging }" :style="{ ...cardStyle(card, index, swipeCards.length), background: card.color }" :data-testid="`swipe-card-${card.id}`" @pointerdown="(e) => onPointerDown(e, card)" @mouseenter="cursorActive = true" @mouseleave="cursorActive = false">
+      <div v-for="(card, index) in swipeCards" :key="card.id" class="swipe-card" :class="{ top: card.id === topCardId(), dragging: card.id === dragId && dragging }" :style="{ ...cardStyle(card, index, swipeCards.length), background: card.color }" :data-testid="`swipe-card-${card.id}`" @pointerdown="(e) => onPointerDown(e, card)" @touchstart="(e) => onTouchStart(e, card)" @mouseenter="cursorActive = true" @mouseleave="cursorActive = false">
         <div class="swipe-card-inner">
           <h3>{{ card.title }}</h3>
           <p>{{ card.body }}</p>
