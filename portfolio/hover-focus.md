@@ -495,6 +495,12 @@ onUnmounted(() => {
   color: #0f0f14;
   transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
   will-change: transform;
+  /* Makes this element a clipping container so puppetshot's swipe algorithm
+   * (which walks up looking for the nearest overflow-bounded ancestor)
+   * localises the gesture coordinates to the card's own rect rather than
+   * the document. Without this, the synthetic swipe starts somewhere on
+   * the page background and never reaches the card's touch listener. */
+  overflow: hidden;
 }
 
 .swipe-card.top {
