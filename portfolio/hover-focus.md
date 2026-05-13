@@ -58,6 +58,95 @@ const handleDropdownBlur = (event) => {
   }
 }
 
+const swipeCards = ref([
+  { id: 'sc-1', title: 'Sunset Vibes', body: 'Swipe me left or right.', color: '#ff7a59' },
+  { id: 'sc-2', title: 'Aurora', body: 'Drag me with your mouse or finger.', color: '#00ffc6' },
+  { id: 'sc-3', title: 'Neon Pulse', body: 'Past 120px triggers a dismiss.', color: '#ff2d95' },
+  { id: 'sc-4', title: 'Deep Sea', body: 'Use the buttons too — keyboard friendly.', color: '#4f8cff' },
+  { id: 'sc-5', title: 'Lava Flow', body: 'Reset to bring them all back.', color: '#ffb547' },
+])
+const swipeLog = ref([])
+const dragId = ref(null)
+const dragStartX = ref(0)
+const dragOffset = ref(0)
+const dragging = ref(false)
+const SWIPE_THRESHOLD = 120
+
+const topCardId = () => swipeCards.value[swipeCards.value.length - 1]?.id
+
+const onPointerDown = (e, card) => {
+  if (card.id !== topCardId()) return
+  dragId.value = card.id
+  dragStartX.value = e.clientX
+  dragOffset.value = 0
+  dragging.value = true
+  e.currentTarget.setPointerCapture?.(e.pointerId)
+}
+
+const onPointerMove = (e) => {
+  if (!dragging.value) return
+  dragOffset.value = e.clientX - dragStartX.value
+}
+
+const dismissCard = (id, direction) => {
+  const card = swipeCards.value.find((c) => c.id === id)
+  if (!card) return
+  swipeLog.value = [
+    { id, title: card.title, direction, at: new Date().toLocaleTimeString() },
+    ...swipeLog.value,
+  ].slice(0, 6)
+  swipeCards.value = swipeCards.value.filter((c) => c.id !== id)
+}
+
+const onPointerUp = () => {
+  if (!dragging.value) return
+  const id = dragId.value
+  const offset = dragOffset.value
+  dragging.value = false
+  dragId.value = null
+  dragStartX.value = 0
+  dragOffset.value = 0
+  if (Math.abs(offset) > SWIPE_THRESHOLD) {
+    dismissCard(id, offset > 0 ? 'right' : 'left')
+  }
+}
+
+const swipeProgrammatic = (direction) => {
+  const id = topCardId()
+  if (!id) return
+  dismissCard(id, direction)
+}
+
+const resetSwipeDeck = () => {
+  swipeCards.value = [
+    { id: 'sc-1', title: 'Sunset Vibes', body: 'Swipe me left or right.', color: '#ff7a59' },
+    { id: 'sc-2', title: 'Aurora', body: 'Drag me with your mouse or finger.', color: '#00ffc6' },
+    { id: 'sc-3', title: 'Neon Pulse', body: 'Past 120px triggers a dismiss.', color: '#ff2d95' },
+    { id: 'sc-4', title: 'Deep Sea', body: 'Use the buttons too — keyboard friendly.', color: '#4f8cff' },
+    { id: 'sc-5', title: 'Lava Flow', body: 'Reset to bring them all back.', color: '#ffb547' },
+  ]
+  swipeLog.value = []
+}
+
+const cardStyle = (card, index, total) => {
+  const isTop = card.id === topCardId()
+  const depth = total - 1 - index
+  const baseScale = 1 - depth * 0.04
+  const baseTranslateY = depth * 10
+  if (isTop && dragging.value) {
+    const rotate = dragOffset.value / 20
+    return {
+      transform: `translate(calc(-50% + ${dragOffset.value}px), -50%) rotate(${rotate}deg) scale(${baseScale})`,
+      transition: 'none',
+      zIndex: 100 + index,
+    }
+  }
+  return {
+    transform: `translate(-50%, calc(-50% + ${baseTranslateY}px)) scale(${baseScale})`,
+    zIndex: 100 + index,
+  }
+}
+
 const items = [
   { id: 1, label: 'Card One', reveal: '✨ Secret message #1' },
   { id: 2, label: 'Card Two', reveal: '🔥 Hot take unlocked' },
@@ -93,6 +182,28 @@ onUnmounted(() => {
     <h1>Hover & Focus Playground</h1>
     <p>Move your mouse. Hover the cards. Tab through the buttons.</p>
   </header>
+
+  <section class="swipe-section" data-testid="swipe-section">
+    <h2>Swipeable cards</h2>
+    <p class="hint">Drag the top card left or right. Past 120px it dismisses. Touch, mouse, or pen all work.</p>
+    <div class="swipe-stage" @pointermove="onPointerMove" @pointerup="onPointerUp" @pointercancel="onPointerUp" @pointerleave="onPointerUp">
+      <div v-if="!swipeCards.length" class="swipe-empty" data-testid="swipe-empty">No more cards. Hit reset to bring them back.</div>
+      <div v-for="(card, index) in swipeCards" :key="card.id" class="swipe-card" :class="{ top: card.id === topCardId(), dragging: card.id === dragId && dragging }" :style="{ ...cardStyle(card, index, swipeCards.length), background: card.color }" :data-testid="`swipe-card-${card.id}`" @pointerdown="(e) => onPointerDown(e, card)" @mouseenter="cursorActive = true" @mouseleave="cursorActive = false">
+        <div class="swipe-card-inner">
+          <h3>{{ card.title }}</h3>
+          <p>{{ card.body }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="swipe-actions">
+      <button type="button" class="swipe-btn left" data-testid="swipe-left" :disabled="!swipeCards.length" @click="swipeProgrammatic('left')" @mouseenter="cursorActive = true" @mouseleave="cursorActive = false">← Swipe left</button>
+      <button type="button" class="swipe-btn reset" data-testid="swipe-reset" @click="resetSwipeDeck" @mouseenter="cursorActive = true" @mouseleave="cursorActive = false">Reset</button>
+      <button type="button" class="swipe-btn right" data-testid="swipe-right" :disabled="!swipeCards.length" @click="swipeProgrammatic('right')" @mouseenter="cursorActive = true" @mouseleave="cursorActive = false">Swipe right →</button>
+    </div>
+    <ul v-if="swipeLog.length" class="swipe-log" data-testid="swipe-log">
+      <li v-for="entry in swipeLog" :key="`${entry.id}-${entry.at}`"><strong>{{ entry.title }}</strong> swiped <span :class="`dir-${entry.direction}`">{{ entry.direction }}</span> at {{ entry.at }}</li>
+    </ul>
+  </section>
 
   <section class="grid">
     <div
@@ -315,6 +426,157 @@ onUnmounted(() => {
 .header p {
   color: #a1a1aa;
   margin: 0;
+}
+
+.swipe-section {
+  max-width: 720px;
+  margin: 0 auto 64px;
+  text-align: center;
+}
+
+.swipe-section h2 {
+  font-size: 1.4rem;
+  margin: 0 0 8px;
+  color: #f5f5f7;
+}
+
+.swipe-stage {
+  position: relative;
+  height: 340px;
+  margin: 28px auto 24px;
+  max-width: 360px;
+  touch-action: none;
+  user-select: none;
+}
+
+.swipe-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a1a1aa;
+  border: 2px dashed #2a2a35;
+  border-radius: 16px;
+}
+
+.swipe-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  height: 320px;
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+  color: #0f0f14;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+
+.swipe-card.top {
+  cursor: grab;
+}
+
+.swipe-card.top.dragging {
+  cursor: grabbing;
+}
+
+.swipe-card-inner {
+  position: absolute;
+  inset: 0;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  text-align: left;
+}
+
+.swipe-card-inner h3 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.swipe-card-inner p {
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.swipe-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.swipe-btn {
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 2px solid #2a2a35;
+  background: #1c1c24;
+  color: #f5f5f7;
+  outline: none;
+  transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.swipe-btn:disabled {
+  opacity: 0.4;
+}
+
+.swipe-btn.left:hover:not(:disabled),
+.swipe-btn.left:focus:not(:disabled) {
+  border-color: #ff7a59;
+  color: #ff7a59;
+  box-shadow: 0 0 24px rgba(255, 122, 89, 0.4);
+}
+
+.swipe-btn.right:hover:not(:disabled),
+.swipe-btn.right:focus:not(:disabled) {
+  border-color: #00ffc6;
+  color: #00ffc6;
+  box-shadow: 0 0 24px rgba(0, 255, 198, 0.4);
+}
+
+.swipe-btn.reset:hover,
+.swipe-btn.reset:focus {
+  border-color: #ff2d95;
+  color: #ff2d95;
+  box-shadow: 0 0 24px rgba(255, 45, 149, 0.4);
+}
+
+.swipe-log {
+  margin: 20px auto 0;
+  padding: 14px;
+  list-style: none;
+  background: #1c1c24;
+  border: 1px solid #2a2a35;
+  border-radius: 8px;
+  color: #a1a1aa;
+  font-size: 0.85rem;
+  text-align: left;
+  max-width: 420px;
+}
+
+.swipe-log li {
+  padding: 4px 0;
+}
+
+.swipe-log strong {
+  color: #f5f5f7;
+}
+
+.dir-left {
+  color: #ff7a59;
+  font-weight: 600;
+}
+
+.dir-right {
+  color: #00ffc6;
+  font-weight: 600;
 }
 
 .grid {
