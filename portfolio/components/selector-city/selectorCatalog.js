@@ -53,8 +53,17 @@ export const SELECTOR_CATALOG = [
     detail: 'XPath anchored to a stable attribute, not a path.',
   },
   {
+    id: 'css-id', family: 'CSS', label: 'Id',
+    tier: 7, kind: 'strong', nav: 'pin',
+    syntax: '#submit-btn',
+    metaphor: "The house's unique street number.",
+    detail:
+      'Strong — but only when the id is truly unique and never ' +
+      'auto-generated or recycled by a framework.',
+  },
+  {
     id: 'css-testid', family: 'CSS', label: 'Test id',
-    tier: 7, kind: 'strongest', nav: 'pin',
+    tier: 8, kind: 'strongest', nav: 'pin',
     syntax: '[data-testid="signup-submit"]',
     metaphor: 'A GPS pin placed just for couriers.',
     detail: 'A purpose-built attribute that exists only for tests.',

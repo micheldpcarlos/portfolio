@@ -52,6 +52,11 @@ export function evaluateSelector(selectorId, city, original) {
         ? ok('Role and aria-label still match.')
         : broke('The role or aria-label changed.')
 
+    case 'css-id':
+      return target.idAttr != null && target.idAttr === original.idAttr
+        ? ok('The id still matches.')
+        : broke('The id changed or was removed.')
+
     case 'xpath-attr':
       return target.idAttr != null && target.idAttr === original.idAttr
         ? ok('The id attribute is untouched.')
