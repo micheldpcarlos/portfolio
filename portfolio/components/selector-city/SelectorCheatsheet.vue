@@ -10,64 +10,12 @@ const closeBtn = ref(null)
 
 const SHEET = [
   {
-    family: 'CSS',
-    tag: 'document.querySelector()',
-    accent: '#4f8cff',
-    blurb:
-      'The selectors querySelector understands — the same ones used in ' +
-      'stylesheets. Match by type, class, id, attribute, relationship or position.',
-    rows: [
-      { code: 'tag', desc: 'Every element of that type', ex: 'input' },
-      { code: '.class', desc: 'Elements carrying a class', ex: '.btn-primary' },
-      { code: '#id', desc: 'The one element with that id', ex: '#email' },
-      { code: '[attr]', desc: 'Elements that have an attribute', ex: '[required]' },
-      { code: '[attr="val"]', desc: 'An attribute equals a value', ex: '[type="email"]' },
-      { code: '[attr*="val"]', desc: 'An attribute contains the text', ex: '[class*="card"]' },
-      { code: '[attr^="val"]', desc: 'An attribute starts with the text', ex: '[href^="/api"]' },
-      { code: 'A B', desc: 'B nested anywhere inside A', ex: 'form input' },
-      { code: 'A > B', desc: 'B is a direct child of A', ex: 'ul > li' },
-      { code: 'A + B', desc: 'B right after sibling A', ex: 'label + input' },
-      { code: ':nth-child(n)', desc: 'The nth child of its parent', ex: 'li:nth-child(2)' },
-      { code: ':not(X)', desc: "Elements that don't match X", ex: 'input:not(:disabled)' },
-      { code: ':checked  :focus', desc: 'Elements in a given state', ex: 'input:checked' },
-      { code: 'A, B', desc: 'Match A or B', ex: 'h1, h2' },
-    ],
-    tip:
-      'For tests, prefer ids and data-* attributes over class or :nth-child — ' +
-      "they don't change when the styling does.",
-  },
-  {
-    family: 'XPath',
-    tag: 'document.evaluate()',
-    accent: '#ffb547',
-    blurb:
-      'A path language for HTML. More verbose than CSS, but it can match by ' +
-      'visible text and navigate upward to ancestors.',
-    rows: [
-      { code: '//tag', desc: 'Any <tag>, anywhere in the page', ex: '//button' },
-      { code: '/tag', desc: 'A direct child, step by step', ex: '/html/body' },
-      { code: '//*', desc: 'Any element type', ex: '//*[@role="dialog"]' },
-      { code: '//tag[@attr="val"]', desc: 'By attribute value', ex: '//input[@name="email"]' },
-      { code: '//tag[@id="val"]', desc: 'By id', ex: '//a[@id="home"]' },
-      { code: '//tag[n]', desc: 'The nth match (counting from 1)', ex: '//li[2]' },
-      { code: '//tag[last()]', desc: 'The last match', ex: '//tr[last()]' },
-      { code: '//tag[text()="X"]', desc: 'By exact visible text', ex: '//button[text()="Save"]' },
-      { code: '//tag[contains(@a,"X")]', desc: 'An attribute contains text', ex: '//div[contains(@class,"card")]' },
-      { code: '//tag[contains(.,"X")]', desc: 'The element text contains', ex: '//a[contains(.,"More")]' },
-      { code: '..', desc: 'Step up to the parent element', ex: '//input/..' },
-      { code: '[@a and @b]', desc: 'Several conditions at once', ex: '//input[@type="text" and @required]' },
-    ],
-    tip:
-      'Only XPath can match by visible text or walk up to a parent — handy, ' +
-      'but text-based matches break on copy edits.',
-  },
-  {
     family: 'ARIA',
-    tag: 'Puppeteer  aria/  selectors',
+    tag: 'aria/',
     accent: '#8d6bff',
     blurb:
-      "Puppeteer's aria/ engine finds elements by their accessibility role " +
-      'and name — the way assistive technology sees the page.',
+      "Puppeteer's aria/ engine finds elements by accessibility role and name " +
+      '— the way assistive tech, and cloudbrowser by default, sees the page.',
     rows: [
       { code: 'aria/Name', desc: 'By accessible name', ex: 'aria/Sign in' },
       { code: 'aria/Name[role="r"]', desc: 'Accessible name and role', ex: 'aria/Sign in[role="button"]' },
@@ -84,8 +32,66 @@ const SHEET = [
       },
     ],
     tip:
-      'Finds elements by purpose, the way a screen reader does — resilient to ' +
-      'markup changes, and it doubles as an accessibility check.',
+      'cloudbrowser tries ARIA first — it survives markup changes and doubles ' +
+      'as an accessibility check.',
+  },
+  {
+    family: 'CSS',
+    tag: 'default — no prefix',
+    accent: '#4f8cff',
+    blurb:
+      "Puppeteer's default engine: plain CSS selectors, the same ones " +
+      'querySelector and stylesheets use. Match by type, class, id, attribute, ' +
+      'relationship or position.',
+    rows: [
+      { code: 'tag', desc: 'Every element of that type', ex: 'input' },
+      { code: '.class', desc: 'Elements carrying a class', ex: '.btn-primary' },
+      { code: '#id', desc: 'The one element with that id', ex: '#email' },
+      { code: '[attr]', desc: 'Elements that have an attribute', ex: '[required]' },
+      { code: '[attr="val"]', desc: 'An attribute equals a value', ex: "[data-testid='save']" },
+      { code: '[attr*="val"]', desc: 'An attribute contains the text', ex: '[class*="card"]' },
+      { code: '[attr^="val"]', desc: 'An attribute starts with the text', ex: '[href^="/api"]' },
+      { code: 'A B', desc: 'B nested anywhere inside A', ex: 'form input' },
+      { code: 'A > B', desc: 'B is a direct child of A', ex: 'ul > li' },
+      { code: 'A + B', desc: 'B right after sibling A', ex: 'label + input' },
+      { code: ':nth-child(n)', desc: 'The nth child of its parent', ex: 'li:nth-child(2)' },
+      { code: ':not(X)', desc: "Elements that don't match X", ex: 'input:not(:disabled)' },
+      { code: ':checked  :focus', desc: 'Elements in a given state', ex: 'input:checked' },
+      { code: 'A, B', desc: 'Match A or B', ex: 'h1, h2' },
+    ],
+    tip:
+      'cloudbrowser ranks data-testid, data-test, data-qa and data-cy highest ' +
+      '— add one and the selector stops depending on styling.',
+  },
+  {
+    family: 'XPath',
+    tag: 'xpath/',
+    accent: '#ffb547',
+    blurb:
+      'A path language for HTML. More verbose than CSS, but it can match by ' +
+      'visible text and walk upward to ancestors.',
+    rows: [
+      { code: '//tag', desc: 'Any <tag>, anywhere in the page', ex: '//button' },
+      { code: '/tag', desc: 'A direct child, step by step', ex: '/html/body' },
+      { code: '//*', desc: 'Any element type', ex: '//*[@role="dialog"]' },
+      { code: '//*[@attr="val"]', desc: 'By attribute value', ex: '//*[@id="submit-btn"]' },
+      { code: '//tag[n]', desc: 'The nth match (counting from 1)', ex: '//li[2]' },
+      { code: '//tag[last()]', desc: 'The last match', ex: '//tr[last()]' },
+      { code: '//tag[text()="X"]', desc: 'By exact visible text', ex: '//button[text()="Save"]' },
+      { code: '//tag[contains(@a,"X")]', desc: 'An attribute contains text', ex: '//div[contains(@class,"card")]' },
+      { code: '//tag[contains(.,"X")]', desc: 'The element text contains', ex: '//a[contains(.,"More")]' },
+      { code: '..', desc: 'Step up to the parent element', ex: '//input/..' },
+      { code: '[@a and @b]', desc: 'Several conditions at once', ex: '//input[@type="text" and @required]' },
+    ],
+    notes: [
+      {
+        title: 'Puppeteer prefix',
+        body: 'Put xpath/ before the expression — //button becomes xpath///button, and /html/body becomes xpath//html/body.',
+      },
+    ],
+    tip:
+      'Only XPath can match by visible text or step up to a parent — handy, ' +
+      'though text matches break on copy edits.',
   },
 ]
 
@@ -133,8 +139,11 @@ onBeforeUnmount(() => {
             <div class="cs-head-text">
               <h2 id="cs-title">Selectors cheat sheet</h2>
               <p>
-                A selector tells a tool which element you mean. Here are the
-                three families and their most common patterns.
+                cloudbrowser automates the browser with Puppeteer, which finds
+                elements through selector engines — CSS plus the
+                <code>aria/</code>, <code>xpath/</code>, <code>text/</code> and
+                <code>pierce/</code> prefixes. Here are the three you'll reach
+                for most.
               </p>
             </div>
             <button
@@ -237,10 +246,16 @@ onBeforeUnmount(() => {
 
 .cs-head-text p {
   margin: 0;
-  max-width: 60ch;
+  max-width: 62ch;
   font-size: 0.86rem;
   line-height: 1.5;
   color: #9a9aac;
+}
+
+.cs-head-text p code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.82em;
+  color: #cbb8ff;
 }
 
 .cs-close {

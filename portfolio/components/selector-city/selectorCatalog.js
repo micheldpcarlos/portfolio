@@ -1,14 +1,15 @@
 // selectorCatalog.js
-// Three selector families — CSS (querySelector), XPath and ARIA — each shown
-// in weak and strong forms. The lesson: the family doesn't decide strength;
-// what the selector is *anchored to* does. Ordered weak -> strong.
+// Three Puppeteer selector engines — ARIA (aria/), CSS and XPath (xpath/) —
+// each shown in weak and strong forms. Syntax matches how cloudbrowser's
+// browser-tools store selectors. The lesson: the engine doesn't decide
+// strength; what the selector is *anchored to* does. Ordered weak -> strong.
 
 export const SELECTOR_CATALOG = [
   // ---- weak ----
   {
     id: 'xpath-abs', family: 'XPath', label: 'Absolute path',
     tier: 1, kind: 'weak', nav: 'route',
-    syntax: '/html/body/form/div[3]',
+    syntax: 'xpath//html/body/form/div[3]',
     metaphor: 'Turn-by-turn directions from the gate.',
     detail: 'Anchored to position — anything inserted upstream throws it off.',
   },
@@ -47,7 +48,7 @@ export const SELECTOR_CATALOG = [
   {
     id: 'xpath-attr', family: 'XPath', label: 'Attribute path',
     tier: 6, kind: 'strong', nav: 'pin',
-    syntax: '//button[@id="submit-btn"]',
+    syntax: 'xpath///*[@id="submit-btn"]',
     metaphor: 'The house with a unique number.',
     detail: 'XPath anchored to a stable attribute, not a path.',
   },
