@@ -257,38 +257,42 @@ onUnmounted(() => {
   font-style: normal;
 }
 
+/* A quiet metaphor legend — deliberately understated so the cheat-sheet
+   button stays the hero's main call to action. */
 .sc-concepts {
   list-style: none;
-  margin: 6px 0 0;
+  margin: 0;
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 2px 8px;
+  font-size: 0.75rem;
 }
 
 .sc-concepts li {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: 1px solid #2c2c38;
-  background: #1a1a22;
-  font-size: 0.8rem;
+  gap: 5px;
+}
+
+.sc-concepts li:not(:last-child)::after {
+  content: "·";
+  margin-left: 8px;
+  color: #3d3d4a;
 }
 
 .sc-concept-a {
-  color: #9a9aac;
+  color: #6f6f86;
 }
 
 .sc-concept-arrow {
-  color: #8d6bff;
-  font-weight: 800;
+  color: #55556a;
+  font-weight: 700;
 }
 
 .sc-concept-b {
-  color: #f5f5f7;
-  font-weight: 700;
+  color: #9a9aac;
+  font-weight: 600;
 }
 
 .sc-cheatsheet-btn {
