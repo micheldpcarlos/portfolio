@@ -49,39 +49,39 @@ import { state, eventCounts, applyCityEvent, resetCity } from './cityStore.js'
 .sc-events {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 18px;
-  border-radius: 18px;
+  gap: 10px;
+  padding: 13px 16px;
+  border-radius: 16px;
   border: 1px solid #2c2c38;
   background: linear-gradient(160deg, #1c1722, #161620);
 }
 
 .sc-events-head {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
 .sc-events-head h2 {
-  margin: 0 0 4px;
-  font-size: 1.15rem;
+  margin: 0 0 1px;
+  font-size: 1.02rem;
   font-weight: 700;
   color: #f5f5f7;
 }
 
 .sc-events-head p {
   margin: 0;
-  max-width: 52ch;
-  font-size: 0.86rem;
-  line-height: 1.5;
+  max-width: 64ch;
+  font-size: 0.79rem;
+  line-height: 1.4;
   color: #9a9aac;
 }
 
 .sc-reset {
   flex-shrink: 0;
-  padding: 9px 15px;
+  padding: 7px 13px;
   border-radius: 999px;
   border: 1px solid #3a3a48;
   background: #20202b;
@@ -110,17 +110,17 @@ import { state, eventCounts, applyCityEvent, resetCity } from './cityStore.js'
 
 .sc-events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(196px, 1fr));
+  gap: 8px;
 }
 
 .sc-event-btn {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 12px 13px;
-  border-radius: 13px;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 11px;
   border: 1px solid #2c2c38;
   background: #15151c;
   color: #e8e8ee;
@@ -148,7 +148,7 @@ import { state, eventCounts, applyCityEvent, resetCity } from './cityStore.js'
 }
 
 .sc-event-icon {
-  font-size: 1.3rem;
+  font-size: 1.05rem;
   line-height: 1;
   flex-shrink: 0;
 }
@@ -156,18 +156,18 @@ import { state, eventCounts, applyCityEvent, resetCity } from './cityStore.js'
 .sc-event-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   min-width: 0;
 }
 
 .sc-event-label {
-  font-size: 0.88rem;
+  font-size: 0.83rem;
   font-weight: 700;
 }
 
 .sc-event-blurb {
-  font-size: 0.74rem;
-  line-height: 1.35;
+  font-size: 0.7rem;
+  line-height: 1.3;
   color: #8d8d9e;
 }
 

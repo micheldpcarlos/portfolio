@@ -369,6 +369,14 @@ onUnmounted(() => {
   border: 0;
 }
 
+@media (min-width: 1024px) {
+  .sc-board-right {
+    position: sticky;
+    top: 12px;
+    align-self: start;
+  }
+}
+
 @media (max-width: 1023px) {
   .sc-board,
   .sc-bottom {

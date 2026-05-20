@@ -55,4 +55,33 @@ import SelectorCard from './SelectorCard.vue'
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* Desktop: cards scroll inside the panel instead of growing the page. */
+@media (min-width: 1024px) {
+  .sc-panel-grid {
+    max-height: calc(100vh - 112px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 4px 8px 4px 4px;
+    margin: -4px -8px -4px -4px;
+    scrollbar-width: thin;
+    scrollbar-color: #34343f transparent;
+  }
+  .sc-panel-grid::-webkit-scrollbar {
+    width: 9px;
+  }
+  .sc-panel-grid::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .sc-panel-grid::-webkit-scrollbar-thumb {
+    background: #34343f;
+    border-radius: 9px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  .sc-panel-grid::-webkit-scrollbar-thumb:hover {
+    background: #44444f;
+    background-clip: padding-box;
+  }
+}
 </style>
