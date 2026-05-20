@@ -37,6 +37,7 @@ const dossier = computed(() => {
     { k: 'street', cur: '.' + street.value.name, orig: '.' + o.streetName },
     { k: 'nth-child', cur: String(t.lot + 1), orig: String(o.lot + 1) },
     { k: 'DOM path', cur: t.domPath.join(' / '), orig: o.domPath.join(' / ') },
+    { k: 'nesting', cur: t.ancestry.join(' › '), orig: o.ancestry.join(' › ') },
   ]
   return rows.map((r) => ({ ...r, changed: r.cur !== r.orig }))
 })

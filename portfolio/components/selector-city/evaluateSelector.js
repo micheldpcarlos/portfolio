@@ -28,6 +28,16 @@ export function evaluateSelector(selectorId, city, original) {
         ? ok('Same position on the same street.')
         : broke('A sibling shifted the :nth-child count.')
 
+    case 'css-structure':
+      return arrEq(target.ancestry, original.ancestry)
+        ? ok('The nesting chain still matches.')
+        : broke('A refactor reshaped the block — the descendant chain is gone.')
+
+    case 'xpath-text':
+      return target.text === original.text
+        ? ok('The visible text still matches.')
+        : broke('The visible text changed — the match is gone.')
+
     case 'css-class': {
       const matches = city.houses.filter((h) =>
         h.classes.includes(original.distinctiveClass),
