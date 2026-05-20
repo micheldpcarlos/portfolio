@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { state, statusMap, brokenCount, setReducedMotion } from './cityStore.js'
 import { targetHouse } from './cityModel.js'
 import { SELECTOR_CATALOG } from './selectorCatalog.js'
@@ -49,17 +49,47 @@ const liveMessage = computed(() => {
   return `${last.label} applied. ${total - broke} of ${total} selectors still find the element; ${broke} broke.`
 })
 
-let cleanup = null
+// Keep the address book exactly as tall as the city map so the cards can be
+// scrolled while the map stays in view. The map is an SVG, so its height is
+// intrinsic — measure it with a ResizeObserver.
+const mapHost = ref(null)
+const mapHeight = ref(0)
+const isWide = ref(false)
+const panelHeight = computed(() =>
+  isWide.value && mapHeight.value > 0 ? mapHeight.value : null,
+)
+
+let disposers = []
 onMounted(() => {
-  if (typeof window === 'undefined' || !window.matchMedia) return
-  const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-  setReducedMotion(mq.matches)
-  const handler = (e) => setReducedMotion(e.matches)
-  mq.addEventListener('change', handler)
-  cleanup = () => mq.removeEventListener('change', handler)
+  if (typeof window === 'undefined') return
+
+  if (window.matchMedia) {
+    const mqMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setReducedMotion(mqMotion.matches)
+    const onMotion = (e) => setReducedMotion(e.matches)
+    mqMotion.addEventListener('change', onMotion)
+    disposers.push(() => mqMotion.removeEventListener('change', onMotion))
+
+    const mqWide = window.matchMedia('(min-width: 1024px)')
+    isWide.value = mqWide.matches
+    const onWide = (e) => { isWide.value = e.matches }
+    mqWide.addEventListener('change', onWide)
+    disposers.push(() => mqWide.removeEventListener('change', onWide))
+  }
+
+  if (window.ResizeObserver && mapHost.value) {
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        mapHeight.value = Math.round(entry.contentRect.height)
+      }
+    })
+    ro.observe(mapHost.value)
+    disposers.push(() => ro.disconnect())
+  }
 })
 onUnmounted(() => {
-  if (cleanup) cleanup()
+  for (const dispose of disposers) dispose()
+  disposers = []
 })
 </script>
 
@@ -90,7 +120,9 @@ onUnmounted(() => {
 
       <div class="sc-board">
         <div class="sc-board-left">
-          <CityMap />
+          <div ref="mapHost" class="sc-map-host">
+            <CityMap />
+          </div>
 
           <section class="sc-dossier" aria-labelledby="sc-dossier-title">
             <div class="sc-dossier-head">
@@ -117,7 +149,7 @@ onUnmounted(() => {
         </div>
 
         <div class="sc-board-right">
-          <SelectorPanel />
+          <SelectorPanel :panel-height="panelHeight" />
         </div>
       </div>
 
