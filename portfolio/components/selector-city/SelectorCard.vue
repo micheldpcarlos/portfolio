@@ -59,6 +59,7 @@ const kindColor = computed(() => KIND_META[props.selector.kind].color)
   flex-direction: column;
   gap: 8px;
   width: 100%;
+  min-width: 0;
   text-align: left;
   padding: 16px 16px 14px;
   border-radius: 14px;
@@ -130,6 +131,7 @@ const kindColor = computed(() => KIND_META[props.selector.kind].color)
   border: 1px solid #2c2c38;
   border-radius: 8px;
   padding: 7px 9px;
+  min-width: 0;
   overflow-x: auto;
   white-space: nowrap;
 }

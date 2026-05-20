@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { state } from './cityStore.js'
+import { state, statusMap } from './cityStore.js'
 import { SELECTOR_CATALOG } from './selectorCatalog.js'
 
 const STREET_Y = { 'st-main': 200, 'st-maple': 410, 'st-oak': 620 }
@@ -39,13 +39,45 @@ const selectedSelector = computed(
 )
 const navMode = computed(() => selectedSelector.value?.nav || null)
 
+// Status of the selected selector against the current city (once events fired).
+const selectedStatus = computed(() =>
+  selectedSelector.value && state.triggeredEvents.length > 0
+    ? statusMap.value[selectedSelector.value.id]
+    : null,
+)
+const isBroken = computed(() => selectedStatus.value?.broke === true)
+const navColor = computed(() =>
+  isBroken.value ? '#ff5d6c' : selectedStatus.value ? '#35d29a' : '#ffb547',
+)
+
+// When a positional selector breaks, the stale directions lead to whatever
+// house now sits at the target's old spot — the "wrong door".
+const decoyPlace = computed(() => {
+  const o = state.originalTarget
+  return (
+    placedHouses.value.find(
+      (p) =>
+        p.house.streetId === o.streetId &&
+        p.house.lot === o.lot &&
+        !p.house.isTarget,
+    ) || null
+  )
+})
+const searchTarget = computed(() => {
+  if (!targetPlace.value) return null
+  if (isBroken.value && navMode.value === 'route' && decoyPlace.value) {
+    return decoyPlace.value
+  }
+  return targetPlace.value
+})
+
 const routeD = computed(() => {
-  const t = targetPlace.value
+  const t = searchTarget.value
   if (!t) return ''
   return `M ${GATE.x} ${GATE.y} L ${GATE.x} ${t.y} L ${t.x} ${t.y}`
 })
 const routeLen = computed(() => {
-  const t = targetPlace.value
+  const t = searchTarget.value
   if (!t) return 1
   return t.y - GATE.y + Math.abs(t.x - GATE.x)
 })
@@ -53,6 +85,11 @@ const routeLen = computed(() => {
 const hudText = computed(() => {
   const s = selectedSelector.value
   if (!s) return 'Pick an address from the book to send the courier →'
+  if (isBroken.value) {
+    return navMode.value === 'route'
+      ? `${s.label}: stale directions — the courier arrives at the wrong house.`
+      : `${s.label}: no match — the city changed and this address finds nothing.`
+  }
   const byNav = {
     route: 'following the route, turn by turn…',
     scan: 'scanning the city for a matching paint colour…',
@@ -61,7 +98,8 @@ const hudText = computed(() => {
     nameplate: 'reading the mailbox nameplates…',
     pin: 'going straight to the planted pin…',
   }
-  return `${s.label}: ${byNav[s.nav]}`
+  const tail = selectedStatus.value ? ' — still a direct hit.' : ''
+  return `${s.label}: ${byNav[s.nav]}${tail}`
 })
 
 const mapDescription = computed(
@@ -92,6 +130,7 @@ watch(
     <svg
       class="sc-map"
       :class="{ 'sc-rm': state.reducedMotion, 'sc-shaking': shaking }"
+      :style="{ '--nav': navColor }"
       viewBox="0 0 920 680"
       role="img"
       aria-labelledby="sc-map-title sc-map-desc"
@@ -105,9 +144,9 @@ watch(
           <stop offset="1" stop-color="#0c0c11" />
         </linearGradient>
         <linearGradient id="sc-beamgrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#00ffc6" stop-opacity="0" />
-          <stop offset="0.5" stop-color="#00ffc6" stop-opacity="0.4" />
-          <stop offset="1" stop-color="#00ffc6" stop-opacity="0" />
+          <stop class="sc-beam-stop" offset="0" stop-opacity="0" />
+          <stop class="sc-beam-stop" offset="0.5" stop-opacity="0.42" />
+          <stop class="sc-beam-stop" offset="1" stop-opacity="0" />
         </linearGradient>
       </defs>
 
@@ -196,19 +235,19 @@ watch(
               <text x="0" y="-111">🎯 TARGET</text>
             </g>
           </g>
-
-          <!-- selection ring -->
-          <circle
-            v-if="p.house.isTarget && selectedSelector"
-            class="sc-ring"
-            cx="0"
-            cy="-44"
-            r="68"
-          />
         </g>
 
         <!-- ============ navigation overlays ============ -->
         <template v-if="targetPlace">
+          <!-- search ring on whatever the selector currently resolves to -->
+          <circle
+            v-if="selectedSelector && searchTarget"
+            class="sc-ring"
+            :cx="searchTarget.x"
+            :cy="searchTarget.y - 44"
+            r="70"
+          />
+
           <!-- route: xpath / nth-child / structure -->
           <g v-if="navMode === 'route'" :key="'route' + state.navTick">
             <path
@@ -217,7 +256,7 @@ watch(
               :style="{ '--len': routeLen }"
             />
             <circle class="sc-turn" :cx="GATE.x" :cy="GATE.y" r="6" />
-            <circle class="sc-turn" :cx="GATE.x" :cy="targetPlace.y" r="6" />
+            <circle class="sc-turn" :cx="GATE.x" :cy="searchTarget.y" r="6" />
             <circle
               class="sc-courier"
               r="9"
@@ -301,6 +340,18 @@ watch(
               <text class="sc-pin-text" x="0" y="7">
                 {{ state.selectedSelectorId === 'testid' ? '◎' : '#' }}
               </text>
+            </g>
+          </g>
+
+          <!-- result stamp: did the selector still find the element? -->
+          <g
+            v-if="selectedStatus && searchTarget"
+            :key="'stamp' + state.navTick"
+            :transform="`translate(${searchTarget.x + 50}, ${searchTarget.y - 102})`"
+          >
+            <g class="sc-stamp" :class="{ 'is-broke': isBroken }">
+              <circle r="15" />
+              <text y="6">{{ isBroken ? '✕' : '✓' }}</text>
             </g>
           </g>
         </template>
@@ -449,7 +500,7 @@ watch(
 
 .sc-ring {
   fill: none;
-  stroke: #ffb547;
+  stroke: var(--nav, #ffb547);
   stroke-width: 2.5;
   stroke-dasharray: 7 9;
   opacity: 0.85;
@@ -461,10 +512,35 @@ watch(
   to { transform: rotate(360deg); }
 }
 
+/* ---- result stamp ---- */
+.sc-stamp {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sc-stamp-in 0.45s cubic-bezier(0.2, 1.7, 0.5, 1) 0.95s both;
+}
+@keyframes sc-stamp-in {
+  0% { transform: scale(0) rotate(-35deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+.sc-stamp circle {
+  fill: #35d29a;
+  stroke: #0c0c11;
+  stroke-width: 2;
+}
+.sc-stamp.is-broke circle {
+  fill: #ff5d6c;
+}
+.sc-stamp text {
+  fill: #0c0c11;
+  font-size: 18px;
+  font-weight: 900;
+  text-anchor: middle;
+}
+
 /* ---- route ---- */
 .sc-route {
   fill: none;
-  stroke: #ffb547;
+  stroke: var(--nav, #ffb547);
   stroke-width: 4.5;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -477,7 +553,7 @@ watch(
   to { stroke-dashoffset: 0; }
 }
 .sc-turn {
-  fill: #ffb547;
+  fill: var(--nav, #ffb547);
   stroke: #0c0c11;
   stroke-width: 2;
 }
@@ -496,7 +572,7 @@ watch(
 /* ---- scan ---- */
 .sc-scan {
   fill: none;
-  stroke: #ffb547;
+  stroke: var(--nav, #ffb547);
   stroke-width: 3;
   transform-box: fill-box;
   transform-origin: center;
@@ -511,6 +587,9 @@ watch(
 }
 
 /* ---- beam ---- */
+.sc-beam-stop {
+  stop-color: var(--nav, #00ffc6);
+}
 .sc-beam {
   transform: translateY(0);
   animation: sc-sweep 1.5s ease-in-out forwards;
@@ -523,7 +602,7 @@ watch(
 /* ---- landmark drop marker ---- */
 .sc-drop {
   fill: none;
-  stroke: #00ffc6;
+  stroke: var(--nav, #ffb547);
   stroke-width: 3.5;
   stroke-dasharray: 60;
   stroke-dashoffset: 60;
@@ -533,7 +612,7 @@ watch(
   to { stroke-dashoffset: 0; }
 }
 .sc-drop-head {
-  fill: #00ffc6;
+  fill: var(--nav, #ffb547);
   opacity: 0;
   animation: sc-fadein 0.3s ease 0.4s forwards;
 }
@@ -546,12 +625,12 @@ watch(
   animation: sc-fadein 0.35s ease forwards;
 }
 .sc-plate line {
-  stroke: #4f8cff;
+  stroke: var(--nav, #4f8cff);
   stroke-width: 2.5;
 }
 .sc-plate rect {
   fill: #1a1a22;
-  stroke: #4f8cff;
+  stroke: var(--nav, #4f8cff);
   stroke-width: 2;
 }
 .sc-plate text {
@@ -618,11 +697,13 @@ watch(
 .sc-map.sc-rm .sc-drop-head,
 .sc-map.sc-rm .sc-plate,
 .sc-map.sc-rm .sc-pin,
+.sc-map.sc-rm .sc-stamp,
 .sc-map.sc-rm .sc-city {
   animation: none !important;
   transition: none !important;
 }
 .sc-map.sc-rm .sc-house-inner { opacity: 1; transform: none; }
+.sc-map.sc-rm .sc-stamp { opacity: 1; transform: none; }
 .sc-map.sc-rm .sc-route { stroke-dashoffset: 0; }
 .sc-map.sc-rm .sc-courier { display: none; }
 .sc-map.sc-rm .sc-drop { stroke-dashoffset: 0; }

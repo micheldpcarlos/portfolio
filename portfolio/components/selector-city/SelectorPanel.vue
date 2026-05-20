@@ -61,13 +61,14 @@ defineProps({
 
 .sc-panel-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  /* minmax(0, …) lets cards shrink to the column instead of overflowing it. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 10px;
 }
 
 @media (min-width: 540px) and (max-width: 1023px) {
   .sc-panel-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 }
 
