@@ -191,6 +191,12 @@ onUnmounted(() => {
   gap: 22px;
 }
 
+/* Neutralise stray global element styles (e.g. another page's non-scoped
+   `button { margin }`) that leak into the production CSS bundle. */
+.sc-app :deep(button) {
+  margin: 0;
+}
+
 /* ---- hero ---- */
 .sc-hero {
   display: flex;
