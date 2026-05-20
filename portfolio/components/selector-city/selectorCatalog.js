@@ -31,7 +31,7 @@ export const SELECTOR_CATALOG = [
   {
     id: 'aria-implicit', family: 'ARIA', label: 'Role + visible text',
     tier: 4, kind: 'medium', nav: 'beam',
-    syntax: 'getByRole("button", { name: "Submit" })',
+    syntax: 'aria/Submit[role="button"]',
     metaphor: 'Air ID off a sign that gets repainted.',
     detail: 'Name taken from visible text — a copy edit renames it.',
   },
@@ -40,7 +40,7 @@ export const SELECTOR_CATALOG = [
   {
     id: 'aria-explicit', family: 'ARIA', label: 'Role + aria-label',
     tier: 5, kind: 'strong', nav: 'beam',
-    syntax: 'getByRole("button", { name: "Submit form" })',
+    syntax: 'aria/Submit form[role="button"]',
     metaphor: "Air ID by the building's registered name.",
     detail: 'Name set via aria-label — stable, and tests a11y too.',
   },
@@ -60,7 +60,7 @@ export const SELECTOR_CATALOG = [
   },
 ]
 
-export const SELECTOR_FAMILIES = ['XPath', 'CSS', 'ARIA']
+export const SELECTOR_FAMILIES = ['ARIA', 'CSS', 'XPath']
 
 // The city-change events the simulator can trigger.
 export const CITY_EVENTS = [
