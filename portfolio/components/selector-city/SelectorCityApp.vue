@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import { state, statusMap, brokenCount, setReducedMotion } from './cityStore.js'
 import { targetHouse } from './cityModel.js'
 import { SELECTOR_CATALOG } from './selectorCatalog.js'
@@ -8,6 +8,7 @@ import CityMap from './CityMap.vue'
 import SelectorPanel from './SelectorPanel.vue'
 import StrengthLadder from './StrengthLadder.vue'
 import EventLog from './EventLog.vue'
+import SelectorCheatsheet from './SelectorCheatsheet.vue'
 
 const concepts = [
   { a: 'Selector', b: 'an address' },
@@ -41,6 +42,13 @@ const dossier = computed(() => {
 })
 
 const total = SELECTOR_CATALOG.length
+
+const cheatsheetOpen = ref(false)
+const cheatsheetBtn = ref(null)
+function closeCheatsheet() {
+  cheatsheetOpen.value = false
+  nextTick(() => cheatsheetBtn.value?.focus())
+}
 
 const liveMessage = computed(() => {
   if (state.triggeredEvents.length === 0) return ''
@@ -115,6 +123,16 @@ onUnmounted(() => {
             <span class="sc-concept-b">{{ c.b }}</span>
           </li>
         </ul>
+
+        <button
+          ref="cheatsheetBtn"
+          type="button"
+          class="sc-cheatsheet-btn"
+          @click="cheatsheetOpen = true"
+        >
+          <span class="sc-cheatsheet-icon" aria-hidden="true">📖</span>
+          New to selectors? Open the cheat sheet
+        </button>
       </header>
 
       <CityEventBar />
@@ -161,6 +179,8 @@ onUnmounted(() => {
     </div>
 
     <p class="sc-sr-live" aria-live="polite">{{ liveMessage }}</p>
+
+    <SelectorCheatsheet :open="cheatsheetOpen" @close="closeCheatsheet" />
   </div>
 </template>
 
@@ -269,6 +289,41 @@ onUnmounted(() => {
 .sc-concept-b {
   color: #f5f5f7;
   font-weight: 700;
+}
+
+.sc-cheatsheet-btn {
+  align-self: flex-start;
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 17px;
+  border-radius: 999px;
+  border: 1px solid rgba(141, 107, 255, 0.45);
+  background: linear-gradient(180deg, #241c34, #1b1626);
+  color: #d9ccff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.sc-cheatsheet-btn:hover {
+  transform: translateY(-2px);
+  border-color: #8d6bff;
+  box-shadow: 0 14px 30px -16px #8d6bff;
+}
+
+.sc-cheatsheet-btn:focus-visible {
+  outline: 3px solid #8d6bff;
+  outline-offset: 3px;
+}
+
+.sc-cheatsheet-icon {
+  font-size: 1.05rem;
 }
 
 /* ---- board: city map + address book side by side ---- */
