@@ -11,21 +11,18 @@ const selected = computed(() => state.selectedSelectorId === props.selector.id)
 const hasEvents = computed(() => state.triggeredEvents.length > 0)
 const status = computed(() => statusMap.value[props.selector.id])
 const kindMeta = computed(() => KIND_META[props.selector.kind])
+
+// Border colour reflects whether the selector currently works, not its kind —
+// the weak/strong pill already conveys strength.
+const statusColor = computed(() => (status.value.broke ? '#ff5d6c' : '#35d29a'))
 </script>
 
 <template>
   <button
     type="button"
     class="sc-card"
-    :class="[
-      `sc-card--${selector.kind}`,
-      {
-        'is-selected': selected,
-        'is-broke': hasEvents && status.broke,
-        'is-found': hasEvents && !status.broke,
-      },
-    ]"
-    :style="{ '--kind': kindMeta.color }"
+    :class="{ 'is-selected': selected }"
+    :style="{ '--kind': kindMeta.color, '--status': statusColor }"
     :aria-pressed="selected"
     @click="selectSelector(selector.id)"
   >
@@ -61,6 +58,7 @@ const kindMeta = computed(() => KIND_META[props.selector.kind])
 <style scoped>
 .sc-card {
   --kind: #888;
+  --status: #35d29a;
   display: flex;
   flex-direction: column;
   gap: 7px;
@@ -70,7 +68,7 @@ const kindMeta = computed(() => KIND_META[props.selector.kind])
   padding: 12px 13px 11px;
   border-radius: 13px;
   border: 1px solid #2c2c38;
-  border-left: 4px solid var(--kind);
+  border-left: 4px solid var(--status);
   background: #1a1a22;
   color: #e8e8ee;
   cursor: pointer;
@@ -83,27 +81,19 @@ const kindMeta = computed(() => KIND_META[props.selector.kind])
 
 .sc-card:hover {
   transform: translateY(-3px);
-  border-color: var(--kind);
+  border-color: var(--status);
   background: #20202b;
 }
 
 .sc-card:focus-visible {
-  outline: 3px solid var(--kind);
+  outline: 3px solid var(--status);
   outline-offset: 3px;
 }
 
 .sc-card.is-selected {
   background: #221d2b;
-  border-color: var(--kind);
-  box-shadow: 0 0 0 1px var(--kind), 0 14px 28px -18px var(--kind);
-}
-
-.sc-card.is-broke {
-  border-left-color: #ff5d6c;
-}
-
-.sc-card.is-found {
-  border-left-color: #35d29a;
+  border-color: var(--status);
+  box-shadow: 0 0 0 1px var(--status), 0 14px 28px -18px var(--status);
 }
 
 .sc-card-head {
