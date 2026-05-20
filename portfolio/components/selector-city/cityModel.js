@@ -138,7 +138,6 @@ export function applyEventToCity(city, eventId) {
   switch (eventId) {
     case 'insert-house': return insertHouse(city)
     case 'repaint': return repaint(city)
-    case 'rename-street': return renameStreet(city)
     case 'residents-move': return residentsMove(city)
     case 'refactor-district': return refactorDistrict(city)
     default: return
@@ -168,27 +167,50 @@ function insertHouse(city) {
   )
 }
 
-// A rebrand renames every class and recolours the city.
-function repaint(city) {
-  const palette = ['#9b6cff', '#ff8d3a', '#ff5d8f', '#46c7ff', '#ffc14d', '#5bd6a8']
-  city.houses.forEach((h, i) => {
-    h.color = palette[i % palette.length]
-    h.classes = h.classes.map((c) => 'ui-' + c.replace(/^ui-/, ''))
-  })
+const BRAND_PREFIXES = ['ui', 'theme', 'shell', 'core', 'app', 'v3']
+const REPAINT_PALETTE = [
+  '#9b6cff', '#ff8d3a', '#ff5d8f', '#46c7ff', '#ffc14d',
+  '#5bd6a8', '#ff6b9d', '#7c8cff', '#3fcf8e', '#e8b84b',
+]
+const BUTTON_TEXTS = ['Continue', 'Sign up', 'Get started', 'Join now', 'Register', 'Confirm']
+
+// Pick a random item from `list` that is not `current` — guarantees a visible
+// change every time the event fires.
+function pickDifferent(list, current) {
+  const options = list.filter((x) => x !== current)
+  return options[Math.floor(Math.random() * options.length)]
 }
 
-// The form's wrapper class is renamed — the landmark in scoped selectors is gone.
-function renameStreet(city) {
+function stripBrandPrefix(cls) {
+  for (const p of BRAND_PREFIXES) {
+    if (cls.startsWith(p + '-')) return cls.slice(p.length + 1)
+  }
+  return cls
+}
+
+function currentBrand(city) {
   const t = targetHouse(city)
-  const street = city.streets.find((s) => s.id === t.streetId)
-  street.name = 'register-form'
+  for (const p of BRAND_PREFIXES) {
+    if (t.classes.some((c) => c.startsWith(p + '-'))) return p
+  }
+  return null
 }
 
-// A copy edit rewrites the button's visible text. The accessible name, set via
-// an explicit aria-label, is managed separately and stays put.
+// A rebrand: every class is renamed under a fresh brand prefix and every house
+// is recoloured — a different brand and colours each time.
+function repaint(city) {
+  const brand = pickDifferent(BRAND_PREFIXES, currentBrand(city))
+  for (const h of city.houses) {
+    h.color = REPAINT_PALETTE[Math.floor(Math.random() * REPAINT_PALETTE.length)]
+    h.classes = h.classes.map((c) => brand + '-' + stripBrandPrefix(c))
+  }
+}
+
+// A copy edit rewrites the button's visible text — a fresh wording each time.
+// The accessible name (aria-label) is managed separately and stays put.
 function residentsMove(city) {
   const t = targetHouse(city)
-  t.text = 'Continue'
+  t.text = pickDifferent(BUTTON_TEXTS, t.text)
 }
 
 // The whole form markup is restructured: positions, paths and ancestry change,

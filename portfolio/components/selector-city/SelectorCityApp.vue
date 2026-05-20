@@ -102,9 +102,10 @@ onUnmounted(() => {
         <p class="sc-lede">
           A <strong>selector</strong> is an <strong>address</strong>. The browser
           is a <strong>courier</strong>. Your element is one <strong>house</strong>
-          in a city of thousands. A good address still finds the house
-          <em>after the city changes</em> — a weak one sends the courier to the
-          wrong door.
+          in a city of thousands. <strong>CSS</strong>, <strong>XPath</strong> and
+          <strong>ARIA</strong> each have weak and strong forms —
+          <em>what you anchor to</em> is what decides whether the address still
+          works after the city changes.
         </p>
 
         <ul class="sc-concepts">

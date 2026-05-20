@@ -18,9 +18,8 @@ const pips = MAX_ROBUSTNESS
     <header class="sc-ladder-head">
       <h2 id="sc-ladder-title">The selector strength ladder</h2>
       <p>
-        Robustness = how many of the five city changes a selector survives on its
-        own. Climb from the fragile rungs at the bottom to the dependable ones on
-        top.
+        Robustness = how many city changes a selector survives on its own. Climb
+        from the fragile rungs at the bottom to the dependable ones on top.
       </p>
     </header>
 

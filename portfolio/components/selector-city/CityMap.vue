@@ -333,12 +333,12 @@ watch(
             <g class="sc-pin">
               <path
                 class="sc-pin-body"
-                :class="state.selectedSelectorId === 'testid' ? 'is-testid' : 'is-id'"
+                :class="state.selectedSelectorId === 'css-testid' ? 'is-testid' : 'is-id'"
                 d="M0,40 C-22,8 -22,-10 0,-10 C22,-10 22,8 0,40 Z"
               />
               <circle class="sc-pin-dot" cx="0" cy="3" r="11" />
               <text class="sc-pin-text" x="0" y="7">
-                {{ state.selectedSelectorId === 'testid' ? '◎' : '#' }}
+                {{ state.selectedSelectorId === 'css-testid' ? '◎' : '#' }}
               </text>
             </g>
           </g>

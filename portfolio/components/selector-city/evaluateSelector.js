@@ -1,5 +1,5 @@
 // evaluateSelector.js
-// Pure oracle: given a selector type, the CURRENT (possibly mutated) city, and
+// Pure oracle: given a selector id, the CURRENT (possibly mutated) city, and
 // the immutable snapshot of the original target, decide whether the selector
 // still resolves to that house. No DOM, no side effects.
 
@@ -16,62 +16,50 @@ function arrEq(a, b) {
 export function evaluateSelector(selectorId, city, original) {
   const target = city.houses.find((h) => h.id === original.id)
   if (!target) return broke('The target element no longer exists.')
-  const street = city.streets.find((s) => s.id === target.streetId)
 
   switch (selectorId) {
     case 'xpath-abs':
       return arrEq(target.domPath, original.domPath)
-        ? ok('The directions still lead to the right door.')
-        : broke('A structural change shifted the path — the directions now lead to the wrong door.')
+        ? ok('The path still resolves.')
+        : broke('The path shifted — it leads to the wrong door now.')
 
-    case 'nth-child':
+    case 'css-nth':
       return target.lot === original.lot && target.streetId === original.streetId
-        ? ok('Still the same numbered house on the same street.')
-        : broke('A sibling was inserted or re-ordered — the count is off by one or more.')
+        ? ok('Same position on the same street.')
+        : broke('A sibling shifted the :nth-child count.')
 
-    case 'structure':
-      return arrEq(target.ancestry, original.ancestry)
-        ? ok('The surrounding block shape is unchanged.')
-        : broke('A DOM refactor reshaped the block — the structure no longer matches.')
-
-    case 'class': {
+    case 'css-class': {
       const matches = city.houses.filter((h) =>
         h.classes.includes(original.distinctiveClass),
       )
       if (matches.length === 0)
-        return broke('A rebrand repainted the city — that class name no longer exists.')
+        return broke('The rebrand renamed the class away.')
       if (matches.length > 1 || matches[0].id !== original.id)
-        return broke('Another house now shares that paint colour — the match is ambiguous.')
-      return ok('The paint colour still uniquely marks the house.')
+        return broke('Another element now shares the class.')
+      return ok('The class still uniquely matches.')
     }
 
-    case 'scoped-css': {
-      if (!street || street.name !== original.streetName)
-        return broke('The street was renamed — the landmark in the selector is gone.')
-      const attrValue = target.attrs ? (target.attrs[original.attrKey] ?? null) : null
-      if (attrValue !== original.attrValue)
-        return broke('The local attribute changed.')
-      return ok('A stable street name plus a local attribute still resolve.')
-    }
-
-    case 'text':
+    case 'aria-implicit':
+      if (target.ariaRole !== original.ariaRole)
+        return broke('The role changed.')
       return target.text === original.text
-        ? ok('The visible text still reads the same.')
-        : broke('The visible text was rewritten — "' + original.text + '" is gone.')
+        ? ok('Role and visible-text name still match.')
+        : broke('The visible text changed — the name no longer matches.')
 
-    case 'aria':
-      return target.ariaRole === original.ariaRole && target.ariaName === original.ariaName
-        ? ok('The role and accessible name still identify the building.')
-        : broke('The role or accessible name changed.')
+    case 'aria-explicit':
+      return target.ariaRole === original.ariaRole &&
+        target.ariaName === original.ariaName
+        ? ok('Role and aria-label still match.')
+        : broke('The role or aria-label changed.')
 
-    case 'id':
+    case 'xpath-attr':
       return target.idAttr != null && target.idAttr === original.idAttr
-        ? ok('The unique id is untouched.')
+        ? ok('The id attribute is untouched.')
         : broke('The id changed or was removed.')
 
-    case 'testid':
+    case 'css-testid':
       return target.testId != null && target.testId === original.testId
-        ? ok('The data-testid pin is untouched — couriers still arrive.')
+        ? ok('The data-testid is untouched.')
         : broke('The data-testid was removed.')
 
     default:
@@ -79,7 +67,7 @@ export function evaluateSelector(selectorId, city, original) {
   }
 }
 
-// How many of the five city events a selector survives in isolation (0..5).
+// How many of the city events a selector survives in isolation (0..N).
 // Computed once at module load by replaying each event on a fresh city.
 function robustnessFor(selectorId) {
   let survived = 0

@@ -15,7 +15,8 @@ export const state = reactive({
   city: firstCity,                       // the current, mutable city
   originalTarget: snapshotTarget(firstCity), // frozen identity of the target
   selectedSelectorId: null,              // active card — drives the map animation
-  triggeredEvents: [],                   // audit trail, newest first
+  triggeredEvents: [],                   // audit trail for the log, newest first
+  eventTally: {},                        // uncapped per-event-type fire count
   lastEventId: null,                     // most recent event (drives map effects)
   reducedMotion: false,                  // set in onMounted via matchMedia
   navTick: 0,                            // bumps to re-trigger map animations
@@ -30,19 +31,13 @@ export const statusMap = computed(() => {
   return map
 })
 
-// How many times each event has been fired.
-export const eventCounts = computed(() => {
-  const counts = {}
-  for (const ev of state.triggeredEvents) {
-    counts[ev.id] = (counts[ev.id] || 0) + 1
-  }
-  return counts
-})
+// How many times each event has been fired (uncapped — survives log trimming).
+export const eventCounts = computed(() => state.eventTally)
 
 // Per selector: of the distinct event TYPES the user has triggered, how many
 // did this selector survive? Computed by replaying each event on a fresh city.
 export const survivedCounts = computed(() => {
-  const types = [...new Set(state.triggeredEvents.map((e) => e.id))]
+  const types = Object.keys(state.eventTally)
   const out = {}
   for (const sel of SELECTOR_CATALOG) {
     let survived = 0
@@ -78,6 +73,7 @@ export function applyCityEvent(eventId) {
   state.city = next
   state.lastEventId = eventId
   state.navTick++
+  state.eventTally[eventId] = (state.eventTally[eventId] || 0) + 1
   state.triggeredEvents = [
     { id: eventId, label: meta.label, icon: meta.icon, at: nowLabel() },
     ...state.triggeredEvents,
@@ -89,6 +85,7 @@ export function resetCity() {
   state.city = fresh
   state.originalTarget = snapshotTarget(fresh)
   state.triggeredEvents = []
+  state.eventTally = {}
   state.lastEventId = null
 }
 
