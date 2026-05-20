@@ -119,39 +119,34 @@ onUnmounted(() => {
       <CityEventBar />
 
       <div class="sc-board">
-        <div class="sc-board-left">
-          <div ref="mapHost" class="sc-map-host">
-            <CityMap />
-          </div>
-
-          <section class="sc-dossier" aria-labelledby="sc-dossier-title">
-            <div class="sc-dossier-head">
-              <h2 id="sc-dossier-title">The target element — live state</h2>
-              <span class="sc-dossier-hint">amber = changed from the original</span>
-            </div>
-            <dl class="sc-dossier-grid">
-              <div
-                v-for="row in dossier"
-                :key="row.k"
-                class="sc-dossier-row"
-                :class="{ 'is-changed': row.changed }"
-              >
-                <dt>{{ row.k }}</dt>
-                <dd>
-                  <span class="sc-dossier-cur">{{ row.cur }}</span>
-                  <span v-if="row.changed" class="sc-dossier-was">
-                    was {{ row.orig }}
-                  </span>
-                </dd>
-              </div>
-            </dl>
-          </section>
+        <div ref="mapHost" class="sc-map-host">
+          <CityMap />
         </div>
-
-        <div class="sc-board-right">
-          <SelectorPanel :panel-height="panelHeight" />
-        </div>
+        <SelectorPanel :panel-height="panelHeight" />
       </div>
+
+      <section class="sc-dossier" aria-labelledby="sc-dossier-title">
+        <div class="sc-dossier-head">
+          <h2 id="sc-dossier-title">The target element — live state</h2>
+          <span class="sc-dossier-hint">amber = changed from the original</span>
+        </div>
+        <dl class="sc-dossier-grid">
+          <div
+            v-for="row in dossier"
+            :key="row.k"
+            class="sc-dossier-row"
+            :class="{ 'is-changed': row.changed }"
+          >
+            <dt>{{ row.k }}</dt>
+            <dd>
+              <span class="sc-dossier-cur">{{ row.cur }}</span>
+              <span v-if="row.changed" class="sc-dossier-was">
+                was {{ row.orig }}
+              </span>
+            </dd>
+          </div>
+        </dl>
+      </section>
 
       <div class="sc-bottom">
         <StrengthLadder />
@@ -275,7 +270,7 @@ onUnmounted(() => {
   font-weight: 700;
 }
 
-/* ---- board ---- */
+/* ---- board: city map + address book side by side ---- */
 .sc-board {
   display: grid;
   grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
@@ -283,14 +278,7 @@ onUnmounted(() => {
   align-items: start;
 }
 
-.sc-board-left {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-width: 0;
-}
-
-.sc-board-right {
+.sc-map-host {
   min-width: 0;
 }
 
@@ -405,14 +393,6 @@ onUnmounted(() => {
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
-}
-
-@media (min-width: 1024px) {
-  .sc-board-right {
-    position: sticky;
-    top: 12px;
-    align-self: start;
-  }
 }
 
 @media (max-width: 1023px) {
