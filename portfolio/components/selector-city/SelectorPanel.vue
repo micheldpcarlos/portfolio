@@ -61,9 +61,9 @@ import SelectorCard from './SelectorCard.vue'
   .sc-panel-grid {
     max-height: calc(100vh - 112px);
     overflow-y: auto;
+    overflow-x: hidden;
     overscroll-behavior: contain;
-    padding: 4px 8px 4px 4px;
-    margin: -4px -8px -4px -4px;
+    padding: 3px 8px 6px 0;
     scrollbar-width: thin;
     scrollbar-color: #34343f transparent;
   }
