@@ -5,10 +5,11 @@
 // strength; what the selector is *anchored to* does.
 //
 // Each city event breaks a distinct anchor:
-//   insert-house  -> position / sibling count   (xpath-abs, css-nth)
-//   repaint       -> class names                (css-class)
-//   residents-move-> visible text               (xpath-text, aria-implicit)
-//   refactor      -> nesting / structure        (css-structure, + the paths)
+//   insert-house   -> position / sibling count   (xpath-abs, css-nth)
+//   repaint        -> element class names        (css-class)
+//   rename-street  -> wrapper / container class  (css-scoped)
+//   residents-move -> visible text               (xpath-text, aria-implicit)
+//   refactor       -> nesting / structure        (css-structure, + the paths)
 
 export const SELECTOR_CATALOG = [
   // ---- weak ----
@@ -30,28 +31,35 @@ export const SELECTOR_CATALOG = [
   // ---- medium ----
   {
     id: 'css-structure', family: 'CSS', label: 'Descendant',
-    tier: 3, kind: 'medium', nav: 'landmark',
+    tier: 3, kind: 'medium', nav: 'route',
     syntax: 'form div button',
     metaphor: 'Which house sits inside which block.',
     detail: 'Anchored to the nesting — a refactor reshapes the block and the chain is lost.',
   },
   {
+    id: 'css-scoped', family: 'CSS', label: 'Scoped',
+    tier: 4, kind: 'medium', nav: 'landmark',
+    syntax: '.signup-form button',
+    metaphor: 'The button on Signup-Form street.',
+    detail: 'Anchored to the wrapper class — rename the form and the scope is gone.',
+  },
+  {
     id: 'css-class', family: 'CSS', label: 'Class',
-    tier: 4, kind: 'medium', nav: 'scan',
+    tier: 5, kind: 'medium', nav: 'scan',
     syntax: '.btn-primary',
     metaphor: 'The paint colour of the house.',
     detail: 'Anchored to looks — a rebrand repaints the class away.',
   },
   {
     id: 'xpath-text', family: 'XPath', label: 'Text match',
-    tier: 5, kind: 'medium', nav: 'nameplate',
+    tier: 6, kind: 'medium', nav: 'nameplate',
     syntax: 'xpath///button[text()="Submit"]',
     metaphor: 'Reading the name off the door.',
     detail: 'Anchored to visible text — a copy edit or translation breaks it.',
   },
   {
     id: 'aria-implicit', family: 'ARIA', label: 'Role + visible text',
-    tier: 6, kind: 'medium', nav: 'beam',
+    tier: 7, kind: 'medium', nav: 'beam',
     syntax: 'aria/Submit[role="button"]',
     metaphor: 'Air ID off a sign that gets repainted.',
     detail: 'Name taken from visible text — a copy edit renames it.',
@@ -60,28 +68,28 @@ export const SELECTOR_CATALOG = [
   // ---- strong ----
   {
     id: 'aria-explicit', family: 'ARIA', label: 'Role + aria-label',
-    tier: 7, kind: 'strong', nav: 'beam',
+    tier: 8, kind: 'strong', nav: 'beam',
     syntax: 'aria/Submit form[role="button"]',
     metaphor: "Air ID by the building's registered name.",
     detail: 'Name set via aria-label — stable, and tests a11y too.',
   },
   {
     id: 'css-id', family: 'CSS', label: 'Id',
-    tier: 8, kind: 'strong', nav: 'pin',
+    tier: 9, kind: 'strong', nav: 'pin',
     syntax: '#submit-btn',
     metaphor: "The house's own street number.",
     detail: 'Strong — but only when the id is unique and not auto-generated.',
   },
   {
     id: 'xpath-attr', family: 'XPath', label: 'Attribute path',
-    tier: 9, kind: 'strong', nav: 'pin',
+    tier: 10, kind: 'strong', nav: 'pin',
     syntax: 'xpath///*[@id="submit-btn"]',
     metaphor: 'Found by number, from anywhere in the city.',
     detail: 'XPath anchored to a stable attribute, not a path.',
   },
   {
     id: 'css-testid', family: 'CSS', label: 'Test id',
-    tier: 10, kind: 'strongest', nav: 'pin',
+    tier: 11, kind: 'strongest', nav: 'pin',
     syntax: '[data-testid="signup-submit"]',
     metaphor: 'A GPS pin placed just for couriers.',
     detail: 'A purpose-built attribute that exists only for tests.',
@@ -99,7 +107,11 @@ export const CITY_EVENTS = [
   },
   {
     id: 'repaint', label: 'Repaint the city', icon: '🎨',
-    blurb: 'A rebrand renames every class.',
+    blurb: 'A rebrand renames the element classes.',
+  },
+  {
+    id: 'rename-street', label: 'Rename the street', icon: '🪧',
+    blurb: "Renames the form's wrapper class.",
   },
   {
     id: 'residents-move', label: 'Change the nameplate', icon: '✉️',

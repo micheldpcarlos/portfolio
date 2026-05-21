@@ -138,6 +138,7 @@ export function applyEventToCity(city, eventId) {
   switch (eventId) {
     case 'insert-house': return insertHouse(city)
     case 'repaint': return repaint(city)
+    case 'rename-street': return renameStreet(city)
     case 'residents-move': return residentsMove(city)
     case 'refactor-district': return refactorDistrict(city)
     default: return
@@ -173,6 +174,7 @@ const REPAINT_PALETTE = [
   '#5bd6a8', '#ff6b9d', '#7c8cff', '#3fcf8e', '#e8b84b',
 ]
 const BUTTON_TEXTS = ['Continue', 'Sign up', 'Get started', 'Join now', 'Register', 'Confirm']
+const STREET_NAMES = ['register-form', 'checkout-form', 'auth-panel', 'profile-form', 'wizard-step']
 
 // Pick a random item from `list` that is not `current` — guarantees a visible
 // change every time the event fires.
@@ -206,6 +208,14 @@ function repaint(city) {
   }
 }
 
+// The form's wrapper class is renamed — a fresh name each time. Anything
+// scoped to that wrapper class loses its anchor.
+function renameStreet(city) {
+  const t = targetHouse(city)
+  const street = city.streets.find((s) => s.id === t.streetId)
+  street.name = pickDifferent(STREET_NAMES, street.name)
+}
+
 // A copy edit rewrites the button's visible text — a fresh wording each time.
 // The accessible name (aria-label) is managed separately and stays put.
 function residentsMove(city) {
@@ -213,8 +223,9 @@ function residentsMove(city) {
   t.text = pickDifferent(BUTTON_TEXTS, t.text)
 }
 
-// The whole form markup is restructured: positions, paths and ancestry change,
-// but the element keeps its classes and stays inside the same form.
+// The form markup is restructured: positions, paths and the nesting chain all
+// change — but the element keeps its classes and stays inside the same form
+// (the <form> wrapper, and so the street name, survive).
 function refactorDistrict(city) {
   const t = targetHouse(city)
   const onStreet = city.houses.filter((h) => h.streetId === t.streetId)
@@ -224,7 +235,7 @@ function refactorDistrict(city) {
   t.lot = 0
   others.forEach((h, i) => { h.lot = i + 1 })
   for (const h of onStreet) {
-    h.ancestry = ['main', 'section', 'fieldset', h.tag]
+    h.ancestry = ['form', 'section', 'fieldset', h.tag]
     h.domPath = [4, h.lot]
   }
 }

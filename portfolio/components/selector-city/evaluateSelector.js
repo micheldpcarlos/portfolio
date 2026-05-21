@@ -33,6 +33,13 @@ export function evaluateSelector(selectorId, city, original) {
         ? ok('The nesting chain still matches.')
         : broke('A refactor reshaped the block — the descendant chain is gone.')
 
+    case 'css-scoped': {
+      const street = city.streets.find((s) => s.id === target.streetId)
+      return street && street.name === original.streetName
+        ? ok('The wrapper class still scopes it.')
+        : broke('The wrapper class was renamed — the scope is gone.')
+    }
+
     case 'xpath-text':
       return target.text === original.text
         ? ok('The visible text still matches.')
