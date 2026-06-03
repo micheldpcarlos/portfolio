@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Self-Healing Selectors — Workflow</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@9.4.3/dist/mermaid.min.js"></script>
+<style>
+  :root{ --bg:#f7f9fc; --ink:#1d2230; --muted:#6b7280; --line:#dde3ee; --accent:#4f46e5; --heal:#7c5cd6; --green:#0e9f6e; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding:42px 20px}
+  .wrap{max-width:920px;margin:0 auto}
+  header{text-align:center;margin-bottom:14px}
+  header h1{margin:0;font-size:25px;letter-spacing:-.01em}
+  header p{margin:9px auto 0;color:var(--muted);font-size:14.5px;max-width:660px}
+  header .lead b{color:var(--ink);font-weight:650}
+
+  /* full-bleed so the chart isn't squeezed into the text column */
+  .diagram{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 14px;
+    box-shadow:0 1px 2px rgba(20,30,60,.04),0 10px 30px rgba(20,30,60,.05);
+    width:min(96vw,1500px);margin-left:calc(50% - min(48vw,750px));overflow-x:auto}
+  pre.mermaid{margin:0}
+  pre.mermaid svg{display:block;margin:0 auto;height:auto}
+  /* label styling inside mermaid html labels */
+  .mermaid .sm{font-size:11.5px;color:#6b7280;font-weight:400}
+  .mermaid b{font-weight:700}
+  .mermaid code{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#eef1f6;padding:1px 5px;border-radius:4px}
+  .mermaid .nodeLabel{line-height:1.45}
+
+  .legend{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+  .lc{background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px 17px}
+  .lc h3{margin:0 0 10px;font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+  .lc .row{font-size:13px;margin:7px 0;display:flex;gap:9px;align-items:center}
+  .tag{font-weight:700;padding:2px 9px;border-radius:7px;font-size:11.5px;flex:0 0 auto}
+  .tag.off{background:#eef0f4;color:#6b7280}.tag.fb{background:#eef0fe;color:var(--accent)}.tag.always{background:#f6f1fe;color:var(--heal)}
+  .lc .row .dotk{flex:0 0 5px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+  .foot{margin:16px auto 0;font-size:12.5px;color:var(--muted);max-width:760px;text-align:center}
+  .foot code{font-family:ui-monospace,Menlo,monospace;background:#eef1f6;padding:1px 5px;border-radius:4px;color:#454c5b}
+
+  .poc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 26px;margin-top:28px;
+    box-shadow:0 1px 2px rgba(20,30,60,.04),0 10px 30px rgba(20,30,60,.05);
+    width:min(96vw,1500px);margin-left:calc(50% - min(48vw,750px))}
+  .poc h2{margin:0;font-size:17px}
+  .poc .intro{color:var(--muted);font-size:13.5px;margin:7px 0 0;max-width:860px}
+  .poc .intro b{color:var(--ink)}
+  .poc .intro code,.poc .how code,.poc .takeaway code{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;background:#eef1f6;padding:1px 5px;border-radius:4px;color:#454c5b}
+  .poc .how{margin-top:14px;background:#f7f9fc;border:1px solid var(--line);border-radius:12px;padding:13px 16px}
+  .poc .how ol{margin:8px 0 0;padding-left:20px;font-size:13px;color:#39414f;line-height:1.75}
+  .poc .how ol li{margin:3px 0}
+  .poc .scope{margin-top:10px;font-size:12.5px;color:var(--muted);background:#eff5ff;border:1px solid #c2d6f2;border-radius:10px;padding:10px 14px}
+  .poc .scope b{color:#234e86}
+  .poc .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  .poc .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .poc .lbl .meth{background:#eef0fe;color:var(--accent);padding:1px 8px;border-radius:5px}
+  .poc .lbl .code{background:#eef0fe;color:var(--accent);padding:1px 8px;border-radius:999px;font-family:ui-monospace,Menlo,monospace}
+  .poc pre{margin:0;background:#0e1320;border:1px solid #1d2538;border-radius:11px;padding:14px 16px;overflow:auto;
+    font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#cdd5e6}
+  .poc pre .c{color:#7c8aa6}
+  .poc pre .key{color:#86b3f0}
+  .poc pre .str{color:#cdb389}
+  .poc pre .dead{color:#f0918e}
+  .poc pre .win{color:#74e0ad;font-weight:700}
+  .poc pre .heal{color:#9fe9c6}
+  .poc .takeaway{margin-top:14px;font-size:13.5px;background:#f6f1fe;border:1px solid #e3d8f8;border-radius:11px;padding:12px 15px;color:#3f2d6b}
+  .poc .takeaway b{color:#2c1f4d}
+
+  .cases{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 26px;margin-top:22px;
+    box-shadow:0 1px 2px rgba(20,30,60,.04),0 10px 30px rgba(20,30,60,.05);
+    width:min(96vw,1500px);margin-left:calc(50% - min(48vw,750px))}
+  .cases h2{margin:0;font-size:17px}
+  .cases .sub{color:var(--muted);font-size:13px;margin:7px 0 0}
+  .cases .sub code{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;background:#eef1f6;padding:1px 5px;border-radius:4px;color:#454c5b}
+  .cases table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}
+  .cases th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;padding:8px 10px;border-bottom:1px solid var(--line)}
+  .cases td{padding:10px;border-bottom:1px solid #eef1f6;vertical-align:top;line-height:1.5}
+  .cases tr:last-child td{border-bottom:none}
+  .cases td code{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;background:#eef1f6;padding:1px 5px;border-radius:4px;color:#454c5b}
+  .cases .dead{color:#c0504d;text-decoration:line-through}
+  .cases .live{color:#0e8f63;font-weight:600}
+  .mode{font-weight:700;padding:2px 8px;border-radius:6px;font-size:11px;white-space:nowrap}
+  .mode.off{background:#eef0f4;color:#6b7280}.mode.fb{background:#eef0fe;color:var(--accent)}.mode.always{background:#f6f1fe;color:var(--heal)}
+  .out{font-weight:650;font-size:12.5px;white-space:nowrap}
+  .out.heal{color:#0e8f63}.out.none{color:#6b7280}.out.err{color:#c0504d}.out.gap{color:#b7791f}
+  .cases .gaps{margin-top:14px;font-size:12.5px;background:#fdf6e9;border:1px solid #ecd7a8;border-radius:11px;padding:12px 15px;color:#7a5512}
+  .cases .gaps b{color:#5e3f08}
+  .cases details{border:1px solid var(--line);border-radius:11px;margin-top:8px;background:#fff;overflow:hidden}
+  .cases details[open]{box-shadow:0 4px 14px rgba(20,30,60,.06)}
+  .cases summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;align-items:center;gap:12px}
+  .cases summary::-webkit-details-marker{display:none}
+  .cases summary:hover{background:#fafbfe}
+  .cases summary .chev{flex:0 0 auto;color:#9aa3b2;font-size:11px;transition:transform .15s}
+  .cases details[open] summary .chev{transform:rotate(90deg)}
+  .cases summary .scn{flex:1;font-size:13.5px;min-width:0}
+  .cases summary .scn code{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;background:#eef1f6;padding:1px 5px;border-radius:4px}
+  .cases summary .scn code.dead{color:#c0504d;text-decoration:line-through;background:#fbeeee}
+  .cases summary .scn code.live{color:#0e8f63;background:#e7f7ef}
+  .cases .body{padding:2px 14px 16px;border-top:1px solid #eef1f6}
+  .cases .body .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+  .cases .body .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;margin-bottom:6px}
+  .cases .body pre{margin:0;background:#0e1320;border:1px solid #1d2538;border-radius:10px;padding:12px 14px;overflow:auto;font:11.5px/1.6 ui-monospace,Menlo,monospace;color:#cdd5e6}
+  .cases .body pre .c{color:#7c8aa6}.cases .body pre .k{color:#86b3f0}.cases .body pre .s{color:#cdb389}
+  .cases .body pre .d{color:#f0918e}.cases .body pre .g{color:#74e0ad}.cases .body pre .w{color:#74e0ad;font-weight:700}
+  @media(max-width:760px){.cases .body .cols{grid-template-columns:1fr}}
+  @media(max-width:760px){.poc .cols{grid-template-columns:1fr}}
+  @media(max-width:600px){.legend{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Self-Healing Selectors — How it works</h1>
+    <p class="lead">Every capture runs the same path. Two checks decide a step's fate: <b>was the element found</b>, and — driven by the product's <b>Heal mode</b> — <b>should it heal</b> (sometimes even when the first selector worked). An opaque <b>stepRef</b> rides the whole way so a heal lands back on the exact recipe step.</p>
+  </header>
+
+  <div class="diagram">
+<pre class="mermaid">
+flowchart TD
+  subgraph APP1 [Orchestrator - App or Audit Lambda]
+    A(["▶ Capture runs<br/><small>App for product captures · Audit Lambda for scheduled audits (no UI, reads recipe from DB)</small>"])
+    B["① Build the request<br/><small>same createRequestBody · stamp stepRef · attach the product's healMode</small>"]
+    A --> B
+  end
+
+  subgraph API1 [API - dispatch]
+    G1["② Queue and dispatch<br/><small>SQS → Lambda → Puppetshot</small>"]
+  end
+
+  subgraph PS [Puppetshot - replay and heal]
+    C["③ Replay the step<br/><small>try selectors in priority order</small>"]
+    D{"Element found?"}
+    F1(["✕ Step fails<br/><small>every selector dead — nothing to heal</small>"])
+    E{"Heal this element? — by Heal mode<br/>Off → never<br/>On-fallback → only if a fallback was used<br/>Always → every run, even if the primary worked"}
+    F2(["✓ Left unchanged<br/><small>Off, or the primary still worked</small>"])
+    H3["④ Recompute a fresh set<br/><small>aria · css · xpath · pierce · text · live element, pre-click · via the recorder engine (browser-tools)</small>"]
+    H4["⑤ Validate each candidate<br/><small>must resolve uniquely to the same element</small>"]
+    H5["⑥ Report healed[ ]<br/><small>carries stepRef back out</small>"]
+    C --> D
+    D -->|No| F1
+    D -->|Yes| E
+    E -->|No| F2
+    E -->|Yes| H3
+    H3 --> H4
+    H4 --> H5
+  end
+
+  subgraph API2 [API - relay the result]
+    G2["⑦ Relay healed[ ]<br/><small>in GET /screenshot/:id</small>"]
+  end
+
+  subgraph APP2 [Orchestrator - App or Audit Lambda]
+    P6["⑧ Read healed[ ]<br/><small>map stepRef → the matching StepAction · App for captures, Audit Lambda for audits</small>"]
+    PG["⑨ applyHealedSelectors — the one save op<br/><small>dedupe · keep healed aria/text (fix the selector filter) · skip write if unchanged · always applies when healing ran (Heal mode is the gate)</small>"]
+    P6 --> PG
+  end
+
+  subgraph STORE [Recipe store]
+    Z(["✓ Recipe healed<br/><small>StepAction.selectors updated</small>"])
+    NT["🔔 If audits already send a summary: append the healed count<br/><small>to the existing Slack / email notification — no new channel</small>"]
+    Z -. only if it exists .-> NT
+  end
+
+  B --> G1
+  G1 --> C
+  H5 --> G2
+  G2 --> P6
+  PG --> Z
+
+  classDef start fill:#eef0fe,stroke:#4f46e5,color:#26306b;
+  classDef step fill:#ffffff,stroke:#dbe1ec,color:#1d2230;
+  classDef dec fill:#ffffff,stroke:#4f46e5,color:#1d2230;
+  classDef fail fill:#fdeeee,stroke:#dd5a5a,color:#9a3030;
+  classDef skip fill:#e9f8f1,stroke:#0e9f6e,color:#0c7d57;
+  classDef heal fill:#f6f1fe,stroke:#7c5cd6,color:#3f2d6b;
+  classDef done fill:#e9f8f1,stroke:#0e9f6e,color:#0c7d57;
+  classDef notify fill:#f1f5f9,stroke:#9fb0c7,color:#41506b,stroke-dasharray:4 3;
+
+  class A start;
+  class B,G1,C,G2,P6,PG step;
+  class D,E dec;
+  class F1 fail;
+  class F2 skip;
+  class H3,H4,H5 heal;
+  class NT notify;
+  class Z done;
+
+  style APP1 fill:#eef0fe,stroke:#c7cdf0
+  style APP2 fill:#eef0fe,stroke:#c7cdf0
+  style API1 fill:#f1f5f9,stroke:#cdd5e1
+  style API2 fill:#f1f5f9,stroke:#cdd5e1
+  style PS fill:#eff5ff,stroke:#c2d6f2
+  style STORE fill:#ecfdf5,stroke:#bfe9d6
+</pre>
+  </div>
+
+  <div class="legend">
+    <div class="lc">
+      <h3>Heal mode · per product</h3>
+      <div class="row"><span class="tag off">Off</span> nothing changes (default)</div>
+      <div class="row"><span class="tag fb">On-fallback</span> heal when a backup is used</div>
+      <div class="row"><span class="tag always">Always</span> refresh every run — best for audits</div>
+    </div>
+    <div class="lc">
+      <h3>Key rules</h3>
+      <div class="row"><span class="dotk"></span> Runs only on headless paths (capture, audit)</div>
+      <div class="row"><span class="dotk"></span> At least one selector must still resolve</div>
+      <div class="row"><span class="dotk"></span> One save operation; every healed selector validated</div>
+    </div>
+  </div>
+
+  <p class="foot"><b>Two orchestrators, one flow.</b> The <b>App</b> runs this for product captures; the <b>Audit Lambda</b> runs it for scheduled audits — headless, with no app or browser session, reading the recipe straight from the database. Both use the same build-and-save code above, so a heal looks identical either way. (The interactive CloudBrowser editing session is the one path excluded — we never rewrite selectors under a live user.)</p>
+  <p class="foot"><b>Why <code>stepRef</code>?</b> Selectors get flattened and re-ordered between the orchestrator, the API and Puppetshot — so position can't identify a step. We stamp each step with its <code>StepAction</code> id and echo it back in <code>healed[ ]</code>, so the save targets the exact right step. Audits run on a cadence, keeping every still-resolving selector fresh — recipes never reach the “all-dead” state.</p>
+
+  <div class="poc">
+    <h2>Proof of concept — a real run</h2>
+    <p class="intro">This is the healing engine (<b>Blocks 0–3, already built</b>) running for real inside a <b>locally-built Puppetshot</b>, driven directly over HTTP. The step's stored selectors have mostly rotted — a dead id, a dead class, and a text selector that no longer exists — but the element is still reachable through <b>one surviving fallback</b> (<code>text/About me</code>), so the engine regenerates a fresh, validated set.</p>
+
+    <div class="how">
+      <div class="lbl">How it was run</div>
+      <ol>
+        <li>Built the <b>selector engine</b> into an injectable bundle — <code>npm run build:selector-computer</code> in <code>browser-tools</code> produces <code>selector-computer.iife.js</code>, vendored into Puppetshot. This is the artifact Puppetshot injects into the page to recompute selectors (it's the engine our recorder already uses).</li>
+        <li>Built Puppetshot locally and started it as an HTTP server: <code>ENABLE_PUPPETSHOT_SERVER=true PORT=3001 node ./dist/src/index.js</code></li>
+        <li>Sent a real capture request to <code>POST localhost:3001/screenshot/sync</code> (via the <code>scripts/heal-test.sh</code> helper)</li>
+        <li>Used a step with <b>deliberately broken selectors</b> plus <b>one working fallback</b>, pointed at the live site <code>micheldpcarlos.com</code> — simulating a recipe whose selectors have rotted</li>
+        <li>Set <code>healMode: on-fallback</code> and inspected the returned <code>healed[ ]</code></li>
+      </ol>
+    </div>
+
+    <p class="scope"><b>Where this sits in the flow above:</b> it exercises the <b>Puppetshot box (steps ③–⑥)</b> directly — replay → recompute → validate → report <code>healed[ ]</code>. The orchestrator and save-back steps are stood in for by the <code>curl</code> call here; wiring the API relay and the <code>applyHealedSelectors</code> save is the remaining work (the next blocks).</p>
+
+    <div class="cols">
+      <div>
+        <div class="lbl"><span class="meth">POST</span> /screenshot/sync</div>
+<pre>{
+  <span class="key">"healMode"</span>: <span class="win">"on-fallback"</span>,
+  <span class="key">"steps"</span>: [
+    { <span class="key">"type"</span>: <span class="str">"navigate"</span>, <span class="key">"url"</span>: <span class="str">"https://micheldpcarlos.com"</span> },
+    {
+      <span class="key">"type"</span>: <span class="str">"click"</span>,
+      <span class="key">"stepRef"</span>: <span class="str">"stepaction-abc-123"</span>,
+      <span class="key">"selectors"</span>: [
+        <span class="dead">"#broken_primary"</span>,      <span class="c">// dead</span>
+        <span class="dead">".cascawc"</span>,             <span class="c">// dead</span>
+        <span class="dead">"text/Nothing Here"</span>,    <span class="c">// dead</span>
+        <span class="win">"text/About me"</span>         <span class="c">// still resolves ✓</span>
+      ]
+    }
+  ]
+}</pre>
+      </div>
+      <div>
+        <div class="lbl">Response <span class="code">HTTP 202</span></div>
+<pre><span class="key">"healed"</span>: [
+  {
+    <span class="key">"stepRef"</span>: <span class="str">"stepaction-abc-123"</span>,
+    <span class="key">"reason"</span>: <span class="str">"fallback"</span>,
+    <span class="key">"winningSelector"</span>: <span class="win">"text/About me"</span>,
+    <span class="key">"healed"</span>: [
+      <span class="heal">"aria/About me"</span>,
+      <span class="heal">"a.VPButton"</span>,
+      <span class="heal">"xpath///*[@id=\"VPContent\"]/div/div[1]/div/div[1]/div/div/a"</span>,
+      <span class="heal">"pierce/a.VPButton"</span>,
+      <span class="heal">"text/About me"</span>
+    ]
+  }
+]</pre>
+      </div>
+    </div>
+
+    <div class="takeaway"><b>What it shows:</b> a four-selector list with only one survivor heals back into a <b>fresh, complete set</b> — <code>aria/</code> · css · <code>xpath/</code> · <code>pierce/</code> · <code>text/</code> — each validated to resolve to that same element, reported under the original step via its <code>stepRef</code> so it saves back to exactly the right place.</div>
+  </div>
+
+  <div class="cases">
+    <h2>Use cases covered</h2>
+    <p class="sub">A scenario battery run against the same live site (<code>micheldpcarlos.com</code>) via local Puppetshot — varying the broken selectors, the fallback, the step type, and the <code>healMode</code>. (<code>scripts/heal-scenarios.sh</code>)</p>
+    <p class="sub" style="margin-top:6px">Click any case to see its request and response.</p>
+
+    <details>
+      <summary><span class="chev">▶</span><span class="scn">Broken primary <code class="dead">#legacy-cta</code> → fallback <code class="live">.VPButton.brand</code></span><span class="mode fb">on-fallback</span><span class="out heal">✓ healed</span></summary>
+      <div class="body"><div class="cols">
+        <div><div class="lbl">Request</div><pre>{
+  <span class="k">"healMode"</span>: <span class="w">"on-fallback"</span>,
+  <span class="k">"steps"</span>: [
+    { <span class="k">"type"</span>:<span class="s">"navigate"</span>, <span class="k">"url"</span>:<span class="s">"https://micheldpcarlos.com"</span> },
+    { <span class="k">"type"</span>:<span class="s">"click"</span>, <span class="k">"stepRef"</span>:<span class="s">"cta-button"</span>,
+      <span class="k">"selectors"</span>:[ <span class="d">"#legacy-cta"</span>, <span class="g">".VPButton.brand"</span> ] }
+  ]
+}</pre></div>
+        <div><div class="lbl">Response · healed[ ]</div><pre>[{
+  <span class="k">"stepRef"</span>: <span class="s">"cta-button"</span>,
+  <span class="k">"reason"</span>: <span class="s">"fallback"</span>,
+  <span class="k">"winningSelector"</span>: <span class="w">".VPButton.brand"</span>,
+  <span class="k">"healed"</span>: [
+    <span class="g">"aria/About me"</span>, <span class="g">"a.VPButton"</span>,
+    <span class="g">"xpath///*[@id=\"VPContent\"]/…/a"</span>,
+    <span class="g">"pierce/a.VPButton"</span>, <span class="g">"text/About me"</span>
+  ]
+}]</pre></div>
+      </div></div>
+    </details>
+
+    <details>
+      <summary><span class="chev">▶</span><span class="scn">Primary <code class="live">h1</code> already works</span><span class="mode always">always</span><span class="out heal">✓ healed anyway</span></summary>
+      <div class="body"><div class="cols">
+        <div><div class="lbl">Request</div><pre>{
+  <span class="k">"healMode"</span>: <span class="w">"always"</span>,
+  <span class="k">"steps"</span>: [ <span class="c">/* navigate */</span>,
+    { <span class="k">"type"</span>:<span class="s">"click"</span>, <span class="k">"stepRef"</span>:<span class="s">"hero-title"</span>,
+      <span class="k">"selectors"</span>:[ <span class="g">"h1"</span> ] } ]
+}</pre></div>
+        <div><div class="lbl">Response · healed[ ]</div><pre>[{
+  <span class="k">"stepRef"</span>: <span class="s">"hero-title"</span>,
+  <span class="k">"reason"</span>: <span class="s">"always"</span>,  <span class="c">// healed though the primary worked</span>
+  <span class="k">"winningSelector"</span>: <span class="w">"h1"</span>,
+  <span class="k">"healed"</span>: [ <span class="g">"aria/Michel Carlos[role=\"heading\"]"</span>,
+    <span class="g">"h1.name"</span>, <span class="g">"xpath///*[@id=\"VPContent\"]/…/h1"</span>, <span class="g">"pierce/h1.name"</span> ]
+}]</pre></div>
+      </div></div>
+    </details>
+
+    <details>
+      <summary><span class="chev">▶</span><span class="scn">Broken primary + working fallback</span><span class="mode off">off</span><span class="out none">— no heal</span></summary>
+      <div class="body"><div class="cols">
+        <div><div class="lbl">Request</div><pre>{
+  <span class="k">"healMode"</span>: <span class="s">"off"</span>,
+  <span class="k">"steps"</span>: [ <span class="c">/* navigate */</span>,
+    { <span class="k">"type"</span>:<span class="s">"click"</span>, <span class="k">"stepRef"</span>:<span class="s">"cta-off"</span>,
+      <span class="k">"selectors"</span>:[ <span class="d">"#legacy-cta"</span>, <span class="g">".VPButton.brand"</span> ] } ]
+}</pre></div>
+        <div><div class="lbl">Response</div><pre>{
+  <span class="k">"id"</span>: <span class="s">"…"</span>, <span class="k">"image"</span>: <span class="s">"…"</span>
+  <span class="c">// no "healed" key at all — healing disabled,</span>
+  <span class="c">// behavior byte-for-byte unchanged (safety invariant)</span>
+}</pre></div>
+      </div></div>
+    </details>
+
+    <details>
+      <summary><span class="chev">▶</span><span class="scn">Primary <code class="live">nav</code> works</span><span class="mode fb">on-fallback</span><span class="out none">— no heal</span></summary>
+      <div class="body"><div class="cols">
+        <div><div class="lbl">Request</div><pre>{
+  <span class="k">"healMode"</span>: <span class="w">"on-fallback"</span>,
+  <span class="k">"steps"</span>: [ <span class="c">/* navigate */</span>,
+    { <span class="k">"type"</span>:<span class="s">"click"</span>, <span class="k">"stepRef"</span>:<span class="s">"nav-ok"</span>,
+      <span class="k">"selectors"</span>:[ <span class="g">"nav"</span> ] } ]
+}</pre></div>
+        <div><div class="lbl">Response · healed[ ]</div><pre>{ <span class="k">"healed"</span>: [] }
+<span class="c">// primary resolved first → nothing degrading,</span>
+<span class="c">// so no recompute. (key present but empty)</span></pre></div>
+      </div></div>
+    </details>
+
+    <details>
+      <summary><span class="chev">▶</span><span class="scn">Every selector dead</span><span class="mode fb">on-fallback</span><span class="out err">✕ errors</span></summary>
+      <div class="body"><div class="cols">
+        <div><div class="lbl">Request</div><pre>{
+  <span class="k">"healMode"</span>: <span class="w">"on-fallback"</span>,
+  <span class="k">"steps"</span>: [ <span class="c">/* navigate */</span>,
+    { <span class="k">"type"</span>:<span class="s">"click"</span>, <span class="k">"stepRef"</span>:<span class="s">"dead"</span>,
+      <span class="k">"selectors"</span>:[ <span class="d">"#gone-1"</span>, <span class="d">".removed-class"</span>, <span class="d">"text/Does Not Exist"</span> ] } ]
+}</pre></div>
+        <div><div class="lbl">Response · HTTP 500</div><pre>{
+  <span class="k">"error"</span>: {
+    <span class="k">"type"</span>: <span class="s">"ElementNotFound"</span>,
+    <span class="k">"message"</span>: <span class="s">"… not found or timed out for step</span>
+      <span class="s">'click', selectors: #gone-1,.removed-class,…"</span>
+  }
+}
+<span class="c">// nothing resolved → nothing to heal from</span></pre></div>
+      </div></div>
+    </details>
+
+    <details>
+      <summary><span class="chev">▶</span><span class="scn">3-step recipe: hero, feature (<code>waitForElement</code>), about</span><span class="mode fb">on-fallback</span><span class="out heal">✓ 2 healed</span></summary>
+      <div class="body"><div class="cols">
+        <div><div class="lbl">Request</div><pre>{
+  <span class="k">"healMode"</span>: <span class="w">"on-fallback"</span>,
+  <span class="k">"steps"</span>: [ <span class="c">/* navigate */</span>,
+    { <span class="k">"type"</span>:<span class="s">"click"</span>, <span class="k">"stepRef"</span>:<span class="s">"step-hero"</span>,
+      <span class="k">"selectors"</span>:[ <span class="d">"#hero-2023"</span>, <span class="g">".VPHero .name"</span> ] },
+    { <span class="k">"type"</span>:<span class="s">"waitForElement"</span>, <span class="k">"stepRef"</span>:<span class="s">"step-feature"</span>,
+      <span class="k">"selectors"</span>:[ <span class="d">".old-feature"</span>, <span class="g">".VPFeature"</span> ] },
+    { <span class="k">"type"</span>:<span class="s">"click"</span>, <span class="k">"stepRef"</span>:<span class="s">"step-about"</span>,
+      <span class="k">"selectors"</span>:[ <span class="g">"text/About"</span> ] } ]
+}</pre></div>
+        <div><div class="lbl">Response · healed[ ]</div><pre>[
+  { <span class="k">"stepRef"</span>:<span class="s">"step-hero"</span>, <span class="k">"reason"</span>:<span class="s">"fallback"</span>,
+    <span class="k">"winningSelector"</span>:<span class="w">".VPHero .name"</span>, <span class="k">"healed"</span>:[ <span class="g">"aria/Michel Carlos…"</span>, <span class="g">"h1.name"</span>, … ] },
+  { <span class="k">"stepRef"</span>:<span class="s">"step-feature"</span>, <span class="k">"reason"</span>:<span class="s">"fallback"</span>,
+    <span class="k">"winningSelector"</span>:<span class="w">".VPFeature"</span>, <span class="k">"healed"</span>:[ <span class="g">"div:nth-of-type(1) &gt; div.VPLink"</span>, … ] }
+]
+<span class="c">// the working "text/About" step is NOT in healed[]</span></pre></div>
+      </div></div>
+    </details>
+
+    <details>
+      <summary><span class="chev">▶</span><span class="scn"><b>Hover</b> step, broken → fallback <code class="live">a.VPButton</code></span><span class="mode fb">on-fallback</span><span class="out heal">✓ healed</span></summary>
+      <div class="body"><div class="cols">
+        <div><div class="lbl">Request</div><pre>{
+  <span class="k">"healMode"</span>: <span class="w">"on-fallback"</span>,
+  <span class="k">"steps"</span>: [ <span class="c">/* navigate */</span>,
+    { <span class="k">"type"</span>:<span class="s">"hover"</span>, <span class="k">"stepRef"</span>:<span class="s">"hover-link"</span>,
+      <span class="k">"selectors"</span>:[ <span class="d">"#missing-link"</span>, <span class="g">"a.VPButton"</span> ] } ]
+}</pre></div>
+        <div><div class="lbl">Response · healed[ ]</div><pre>[{
+  <span class="k">"stepRef"</span>: <span class="s">"hover-link"</span>,
+  <span class="k">"reason"</span>: <span class="s">"fallback"</span>,
+  <span class="k">"winningSelector"</span>: <span class="w">"a.VPButton"</span>,
+  <span class="k">"healed"</span>: [ <span class="g">"aria/About me"</span>, <span class="g">"a.VPButton"</span>, <span class="g">"text/About me"</span>, … ]
+}]
+<span class="c">// hover now runs the heal hook (was a gap)</span></pre></div>
+      </div></div>
+    </details>
+
+    <details>
+      <summary><span class="chev">▶</span><span class="scn"><b>Crop element</b> (<code>elementSelector</code>) broken → <code class="live">.VPHero</code></span><span class="mode always">always</span><span class="out heal">✓ healed</span></summary>
+      <div class="body"><div class="cols">
+        <div><div class="lbl">Request</div><pre>{
+  <span class="k">"healMode"</span>: <span class="w">"always"</span>,
+  <span class="k">"elementSelectorStepRef"</span>: <span class="s">"crop-hero"</span>,
+  <span class="k">"elementSelector"</span>: [ <span class="d">"#missing-crop"</span>, <span class="g">".VPHero"</span> ],
+  <span class="k">"steps"</span>: [ <span class="c">/* navigate */</span> ]
+}</pre></div>
+        <div><div class="lbl">Response · healed[ ]</div><pre>[{
+  <span class="k">"stepRef"</span>: <span class="s">"crop-hero"</span>,  <span class="c">// carried back (was null before)</span>
+  <span class="k">"reason"</span>: <span class="s">"always"</span>,
+  <span class="k">"winningSelector"</span>: <span class="w">".VPHero"</span>,
+  <span class="k">"healed"</span>: [ <span class="g">"div.VPHero"</span>, <span class="g">"xpath///*[@id=\"VPContent\"]/div/div[1]"</span>, <span class="g">"pierce/div.VPHero"</span> ]
+}]</pre></div>
+      </div></div>
+    </details>
+
+    <details>
+      <summary><span class="chev">▶</span><span class="scn"><b>Annotation</b> target broken → fallback <code class="live">.VPHero .name</code></span><span class="mode fb">on-fallback</span><span class="out heal">✓ healed</span></summary>
+      <div class="body"><div class="cols">
+        <div><div class="lbl">Request</div><pre>{
+  <span class="k">"healMode"</span>: <span class="w">"on-fallback"</span>,
+  <span class="k">"annotate"</span>: [
+    { <span class="k">"type"</span>:<span class="s">"rectangle"</span>, <span class="k">"stepRef"</span>:<span class="s">"annot-hero"</span>,
+      <span class="k">"selectors"</span>:[ <span class="d">"#missing-annot"</span>, <span class="g">".VPHero .name"</span> ] } ],
+  <span class="k">"steps"</span>: [ <span class="c">/* navigate */</span> ]
+}</pre></div>
+        <div><div class="lbl">Response · healed[ ]</div><pre>[{
+  <span class="k">"stepRef"</span>: <span class="s">"annot-hero"</span>,  <span class="c">// per-annotation tag</span>
+  <span class="k">"reason"</span>: <span class="s">"fallback"</span>,
+  <span class="k">"winningSelector"</span>: <span class="w">".VPHero .name"</span>,
+  <span class="k">"healed"</span>: [ <span class="g">"aria/Michel Carlos[role=\"heading\"]"</span>, <span class="g">"h1.name"</span>, … ]
+}]</pre></div>
+      </div></div>
+    </details>
+    <div class="gaps"><b>All selector-bearing targets now heal.</b> Hover, the crop element, and annotations were wired up after the battery surfaced them — so click · hover · crop · annotations · and the atomic <code>change</code>/<code>waitForElement</code> steps all heal. For the crop element and annotations the orchestrator stamps a <code>stepRef</code> (<code>elementSelectorStepRef</code> / per-annotation) so the heal maps back to the right step. The remaining work is purely downstream: carrying <code>healed[ ]</code> through the API and the <code>applyHealedSelectors</code> save.</div>
+  </div>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad:true,
+    securityLevel:'loose',
+    theme:'base',
+    themeVariables:{ fontFamily:'-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif', fontSize:'15px', lineColor:'#9aa3b2', primaryColor:'#ffffff', primaryBorderColor:'#dde3ee', primaryTextColor:'#1d2230' },
+    flowchart:{ htmlLabels:true, curve:'basis', nodeSpacing:48, rankSpacing:58, padding:10, useMaxWidth:false }
+  });
+</script>
+</body>
+</html>
